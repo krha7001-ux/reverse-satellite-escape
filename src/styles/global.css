@@ -1,0 +1,534 @@
+/* ==== משתני עיצוב: חדר בקרה מדעי ==== */
+:root {
+  --bg-deep: #060d1a;
+  --bg-navy: #0a1628;
+  --bg-panel: #101f36;
+  --graphite: #232b36;
+  --graphite-light: #39434f;
+  --teal: #2dd4c8;
+  --teal-dim: #1a8f88;
+  --amber: #f0a842;
+  --amber-soft: rgba(240, 168, 66, 0.18);
+  --text-main: #e6f1f5;
+  --text-dim: #9db4c0;
+  --danger: #e05656;
+  --radius: 12px;
+  --font-stack: 'Segoe UI', 'Heebo', 'Assistant', Arial, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  direction: rtl;
+  font-family: var(--font-stack);
+  background: var(--bg-deep);
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input {
+  font-family: inherit;
+}
+
+/* ==== אנימציות כלליות ==== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.92) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(45, 212, 200, 0.35); }
+  50% { box-shadow: 0 0 18px rgba(45, 212, 200, 0.75); }
+}
+
+@keyframes unlockShake {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(-12deg); }
+  50% { transform: rotate(10deg); }
+  75% { transform: rotate(-6deg); }
+  100% { transform: rotate(0) scale(1.15); opacity: 0; }
+}
+
+@keyframes floatHint {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes scanline {
+  from { background-position: 0 0; }
+  to { background-position: 0 8px; }
+}
+
+/* ==== מסך פתיחה ==== */
+.start-screen {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(45, 212, 200, 0.08), transparent 50%),
+    radial-gradient(ellipse at 80% 90%, rgba(240, 168, 66, 0.07), transparent 50%),
+    linear-gradient(160deg, var(--bg-deep), var(--bg-navy) 60%, #0c1322);
+  animation: fadeIn 0.6s ease both;
+}
+
+.start-card {
+  width: min(640px, 100%);
+  background: linear-gradient(180deg, var(--bg-panel), #0b1728);
+  border: 1px solid var(--graphite-light);
+  border-top: 3px solid var(--teal);
+  border-radius: var(--radius);
+  padding: 40px 44px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.55),
+    inset 0 0 40px rgba(45, 212, 200, 0.04);
+  animation: popIn 0.5s ease both;
+}
+
+.start-kicker {
+  color: var(--amber);
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  margin-bottom: 10px;
+}
+
+.start-title {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  line-height: 1.25;
+  margin-bottom: 18px;
+  color: var(--text-main);
+  text-shadow: 0 0 24px rgba(45, 212, 200, 0.35);
+}
+
+.start-brief {
+  color: var(--text-dim);
+  line-height: 1.75;
+  font-size: 1.05rem;
+  border-right: 3px solid var(--amber);
+  padding-right: 14px;
+  margin-bottom: 28px;
+  background: var(--amber-soft);
+  border-radius: 6px;
+  padding: 14px 16px 14px 12px;
+}
+
+.start-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.start-label {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+}
+
+.start-input {
+  background: var(--bg-deep);
+  border: 1px solid var(--graphite-light);
+  border-radius: 8px;
+  color: var(--text-main);
+  font-size: 1.15rem;
+  padding: 12px 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.start-input:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(45, 212, 200, 0.2);
+}
+
+.start-button {
+  margin-top: 6px;
+  background: linear-gradient(180deg, var(--teal), var(--teal-dim));
+  color: #04211f;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 20px;
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.start-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.start-button:disabled {
+  filter: grayscale(0.7) brightness(0.6);
+  cursor: not-allowed;
+}
+
+/* ==== מסך משחק ==== */
+.game-screen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.5s ease both;
+}
+
+/* --- סרגל עליון --- */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 18px;
+  background: linear-gradient(180deg, #16233a, var(--bg-panel));
+  border-bottom: 1px solid var(--graphite-light);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  z-index: 10;
+  flex-wrap: wrap;
+}
+
+.team-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--teal);
+}
+
+.team-name .team-label {
+  color: var(--text-dim);
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background: var(--bg-deep);
+  border: 1px solid var(--graphite-light);
+  border-radius: 8px;
+  padding: 4px 14px;
+  color: var(--amber);
+  text-shadow: 0 0 10px rgba(240, 168, 66, 0.5);
+}
+
+.timer.critical {
+  color: var(--danger);
+  border-color: var(--danger);
+  animation: glowPulse 1.2s infinite;
+}
+
+.progress-chip {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  background: var(--bg-deep);
+  border: 1px solid var(--graphite-light);
+  border-radius: 999px;
+  padding: 5px 14px;
+}
+
+.progress-chip strong {
+  color: var(--teal);
+}
+
+.top-bar-spacer {
+  flex: 1;
+}
+
+.icon-button {
+  background: var(--graphite);
+  border: 1px solid var(--graphite-light);
+  color: var(--text-main);
+  border-radius: 8px;
+  font-size: 1.05rem;
+  padding: 7px 12px;
+  transition: background 0.15s, transform 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-button:hover {
+  background: var(--graphite-light);
+  transform: translateY(-1px);
+}
+
+.icon-button.danger:hover {
+  background: rgba(224, 86, 86, 0.25);
+  border-color: var(--danger);
+}
+
+/* --- אזור הפנורמה --- */
+.panorama-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: #000;
+}
+
+.panorama-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.drag-hint {
+  position: absolute;
+  bottom: 18px;
+  inset-inline-start: 50%;
+  transform: translateX(50%);
+  background: rgba(6, 13, 26, 0.82);
+  border: 1px solid var(--teal-dim);
+  color: var(--text-main);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  animation: floatHint 2.6s ease-in-out infinite, fadeIn 0.8s ease both;
+  backdrop-filter: blur(4px);
+}
+
+/* --- סרגל תחנות --- */
+.stations-bar {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  background: linear-gradient(0deg, #0a1220, var(--bg-panel));
+  border-top: 1px solid var(--graphite-light);
+  overflow-x: auto;
+  z-index: 10;
+}
+
+.station-button {
+  flex: 1;
+  min-width: 132px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--graphite-light);
+  background: var(--graphite);
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  position: relative;
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.station-button .station-icon {
+  font-size: 1.5rem;
+  filter: grayscale(1) brightness(0.6);
+  transition: filter 0.3s;
+}
+
+.station-button .station-order {
+  position: absolute;
+  top: 6px;
+  inset-inline-start: 8px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  opacity: 0.7;
+}
+
+.station-button .station-lock {
+  position: absolute;
+  top: 6px;
+  inset-inline-end: 8px;
+  font-size: 0.9rem;
+}
+
+.station-button.locked {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.station-button.active {
+  background: linear-gradient(180deg, #123344, #0d2432);
+  border-color: var(--teal);
+  color: var(--text-main);
+  animation: glowPulse 2.2s infinite;
+  cursor: pointer;
+}
+
+.station-button.active .station-icon {
+  filter: none;
+}
+
+.station-button.active:hover {
+  transform: translateY(-3px);
+}
+
+.station-button.solved {
+  background: linear-gradient(180deg, #143326, #0d2419);
+  border-color: #3fae7a;
+  color: var(--text-main);
+  cursor: default;
+}
+
+.station-button.solved .station-icon {
+  filter: none;
+}
+
+.station-button.just-unlocked .station-lock {
+  animation: unlockShake 0.7s ease forwards;
+}
+
+/* ==== חלון מודאלי ==== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 8, 16, 0.72);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+  animation: fadeIn 0.25s ease both;
+}
+
+.modal-window {
+  width: min(560px, 100%);
+  background: linear-gradient(180deg, var(--bg-panel), #0b1626);
+  border: 1px solid var(--graphite-light);
+  border-top: 3px solid var(--amber);
+  border-radius: var(--radius);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  animation: popIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--graphite);
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(45, 212, 200, 0.03) 0 2px,
+    transparent 2px 4px
+  );
+}
+
+.modal-title {
+  font-size: 1.15rem;
+  color: var(--teal);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.modal-close:hover {
+  color: var(--text-main);
+  background: var(--graphite);
+}
+
+.modal-body {
+  padding: 26px 22px;
+  color: var(--text-main);
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 0 22px 22px;
+}
+
+.modal-button {
+  border-radius: 8px;
+  border: 1px solid var(--graphite-light);
+  background: var(--graphite);
+  color: var(--text-main);
+  padding: 10px 22px;
+  font-size: 1rem;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.modal-button:hover {
+  background: var(--graphite-light);
+  transform: translateY(-1px);
+}
+
+.modal-button.primary {
+  background: linear-gradient(180deg, var(--teal), var(--teal-dim));
+  border: none;
+  color: #04211f;
+  font-weight: 700;
+}
+
+.modal-button.danger {
+  background: linear-gradient(180deg, #c04848, #8f3232);
+  border: none;
+  color: #fff;
+  font-weight: 700;
+}
+
+.placeholder-note {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.placeholder-note .placeholder-icon {
+  font-size: 2.6rem;
+  animation: floatHint 2.4s ease-in-out infinite;
+}
+
+/* ==== רספונסיביות ==== */
+@media (max-width: 900px) {
+  .top-bar {
+    gap: 10px;
+    padding: 8px 12px;
+  }
+
+  .timer {
+    font-size: 1.1rem;
+  }
+
+  .station-button {
+    min-width: 108px;
+    font-size: 0.85rem;
+  }
+}
