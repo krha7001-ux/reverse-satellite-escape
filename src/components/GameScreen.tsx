@@ -5,7 +5,7 @@ import { STATIONS } from '../data/stations';
 import { useTimer } from '../hooks/useTimer';
 import { PUZZLE_COMPONENTS } from '../puzzles';
 import { TopBar } from './TopBar';
-import { PanoramaViewer } from './PanoramaViewer';
+import { ControlRoomViewer } from './ControlRoomViewer';
 import { StationsBar } from './StationsBar';
 import { Modal } from './Modal';
 
@@ -36,7 +36,12 @@ export function GameScreen({ state, dispatch }: GameScreenProps) {
         onRequestReset={() => setShowResetConfirm(true)}
       />
 
-      <PanoramaViewer />
+      <ControlRoomViewer
+        solvedStations={state.solvedStations}
+        onOpenStation={(stationId) =>
+          dispatch({ type: 'OPEN_STATION', stationId })
+        }
+      />
 
       <StationsBar
         solvedStations={state.solvedStations}
