@@ -12,7 +12,9 @@ interface ControlRoomViewerProps {
   onOpenStation: (stationId: StationId) => void;
 }
 
-const MIN_ZOOM = 1;
+/** הגדלת הפתיחה — החדר רחב מאזור התצוגה כבר בכניסה, כך שתמיד יש מה לגרור */
+const DEFAULT_ZOOM = 1.2;
+const MIN_ZOOM = 1.2;
 const MAX_ZOOM = 2.5;
 const ZOOM_STEP = 0.25;
 
@@ -26,8 +28,9 @@ export function ControlRoomViewer({
 }: ControlRoomViewerProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const [viewport, setViewport] = useState({ width: 0, height: 0 });
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [offsetX, setOffsetX] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef({ dragging: false, lastX: 0 });
 
   // מעקב אחרי גודל אזור התצוגה (רספונסיבי)
@@ -78,7 +81,9 @@ export function ControlRoomViewer({
     // לחיצה על נקודת תחנה או כפתור זום אינה מתחילה גרירה —
     // לכידת המצביע הייתה מנתבת את אירוע ה-click הרחק מהכפתור
     if ((e.target as HTMLElement).closest('button')) return;
+    e.preventDefault();
     dragRef.current = { dragging: true, lastX: e.clientX };
+    setIsDragging(true);
     e.currentTarget.setPointerCapture(e.pointerId);
   };
 
@@ -92,12 +97,13 @@ export function ControlRoomViewer({
 
   const endDrag = () => {
     dragRef.current.dragging = false;
+    setIsDragging(false);
   };
 
   return (
     <div
       ref={viewportRef}
-      className="control-room-viewport"
+      className={`control-room-viewport${isDragging ? ' dragging' : ''}`}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
