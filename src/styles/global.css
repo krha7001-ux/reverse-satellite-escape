@@ -277,19 +277,162 @@ input {
   border-color: var(--danger);
 }
 
-/* --- אזור הפנורמה --- */
-.panorama-wrap {
+/* --- חדר הבקרה האינטראקטיבי --- */
+.control-room-viewport {
   position: relative;
   flex: 1;
   min-height: 0;
   background: #000;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
 }
 
-.panorama-frame {
+.control-room-viewport:active {
+  cursor: grabbing;
+}
+
+.control-room-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.control-room-img {
   width: 100%;
   height: 100%;
-  border: 0;
   display: block;
+  pointer-events: none;
+}
+
+/* --- נקודות לחיצה --- */
+.hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--text-main);
+  padding: 0;
+  z-index: 5;
+}
+
+.hotspot-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hotspot-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  border: 2px solid var(--graphite-light);
+  background: rgba(6, 13, 26, 0.8);
+  backdrop-filter: blur(2px);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.hotspot-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: rgba(6, 13, 26, 0.82);
+  border: 1px solid var(--graphite-light);
+  border-radius: 999px;
+  padding: 2px 10px;
+  white-space: nowrap;
+}
+
+.hotspot.locked {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.hotspot.locked .hotspot-icon {
+  font-size: 1rem;
+  color: var(--text-dim);
+}
+
+.hotspot.active {
+  cursor: pointer;
+}
+
+.hotspot.active .hotspot-icon {
+  border-color: var(--teal);
+  animation: glowPulse 2s infinite;
+}
+
+.hotspot.active .hotspot-ring {
+  border: 2px solid var(--teal);
+  animation: hotspotPing 2s ease-out infinite;
+}
+
+.hotspot.active .hotspot-label {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.hotspot.active:hover .hotspot-icon {
+  transform: scale(1.12);
+}
+
+.hotspot.solved .hotspot-icon {
+  border-color: #3fae7a;
+  color: #3fae7a;
+  font-weight: 700;
+}
+
+@keyframes hotspotPing {
+  0% { transform: scale(0.8); opacity: 0.9; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+/* --- כפתורי זום --- */
+.zoom-controls {
+  position: absolute;
+  top: 16px;
+  inset-inline-end: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 6;
+}
+
+.zoom-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--graphite-light);
+  background: rgba(6, 13, 26, 0.85);
+  color: var(--text-main);
+  font-size: 1.5rem;
+  line-height: 1;
+  backdrop-filter: blur(3px);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.zoom-button:hover:not(:disabled) {
+  background: var(--graphite);
+  border-color: var(--teal);
+}
+
+.zoom-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .drag-hint {
@@ -530,5 +673,20 @@ input {
   .station-button {
     min-width: 108px;
     font-size: 0.85rem;
+  }
+
+  .hotspot-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 1.1rem;
+  }
+
+  .hotspot-label {
+    font-size: 0.75rem;
+  }
+
+  .zoom-button {
+    width: 38px;
+    height: 38px;
   }
 }

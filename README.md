@@ -18,7 +18,7 @@ npm run preview  # תצוגה מקדימה של גרסת ה-build
 ## מה כלול במעטפת
 
 - **מסך פתיחה** — שם קבוצה, תדריך משימה וכפתור "התחל משימה".
-- **מסך משחק** — פנורמת 360° של חדר הבקרה (Blockade Labs) הניתנת לגרירה, עם מחוון הסבר.
+- **מסך משחק** — תמונת חדר בקרה אינטראקטיבית עם גרירה אופקית (עכבר ומגע), הגדלה/הקטנה ושש נקודות לחיצה הצמודות לתמונה.
 - **סרגל עליון** — שם הקבוצה, טיימר 60 דקות, התקדמות (0 מתוך 6), השתקת צלילים, איפוס עם אישור.
 - **סרגל תחנות** — שש תחנות; רק הראשונה פעילה והשאר נעולות עם סמל מנעול.
 - **שמירת התקדמות** — מצב המשחק (כולל הטיימר) נשמר ב-localStorage ושורד רענון דף.
@@ -27,9 +27,9 @@ npm run preview  # תצוגה מקדימה של גרסת ה-build
 
 ```
 src/
-├── components/   # רכיבי מסך: StartScreen, GameScreen, TopBar, StationsBar, PanoramaViewer, Modal
+├── components/   # רכיבי מסך: StartScreen, GameScreen, TopBar, StationsBar, ControlRoomViewer, Modal
 ├── puzzles/      # רכיבי חידות — כרגע PuzzlePlaceholder + רישום PUZZLE_COMPONENTS
-├── data/         # הגדרות תחנות, תדריך, משך משימה, כתובת פנורמה
+├── data/         # הגדרות תחנות, תדריך, משך משימה, מיקומי נקודות הלחיצה
 ├── hooks/        # useGameState (מצב מרכזי + localStorage), useTimer (ספירה לאחור)
 ├── types/        # טיפוסי TypeScript: GameState, Station, PuzzleProps ועוד
 └── styles/       # global.css — ערכת עיצוב של חדר בקרה מדעי

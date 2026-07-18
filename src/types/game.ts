@@ -9,6 +9,14 @@ export type StationId =
 
 export type StationStatus = 'locked' | 'active' | 'solved';
 
+/** מיקום נקודת לחיצה על תמונת חדר הבקרה, באחוזים מגודל התמונה */
+export interface Hotspot {
+  /** אחוז אופקי מקצה שמאל של התמונה (0–100) */
+  x: number;
+  /** אחוז אנכי מקצה עליון של התמונה (0–100) */
+  y: number;
+}
+
 export interface Station {
   id: StationId;
   /** מספר סידורי (1–6) */
@@ -17,6 +25,8 @@ export interface Station {
   title: string;
   /** אייקון מייצג */
   icon: string;
+  /** נקודת הלחיצה של התחנה על תמונת חדר הבקרה */
+  hotspot: Hotspot;
 }
 
 /** כרטיס ממצא שנחשף לאחר פתרון חידה */
