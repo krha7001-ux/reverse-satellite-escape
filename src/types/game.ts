@@ -70,5 +70,6 @@ export interface PuzzleProps {
   hintsUsed: number;
   onSolve: () => void;
   onUseHint: () => void;
+  onAddFinding: (finding: FindingCard) => void;
   onClose: () => void;
 }

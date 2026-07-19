@@ -36,30 +36,22 @@ export function GameScreen({ state, dispatch }: GameScreenProps) {
         onRequestReset={() => setShowResetConfirm(true)}
       />
 
-      <ControlRoomViewer
-        solvedStations={state.solvedStations}
-        onOpenStation={(stationId) =>
-          dispatch({ type: 'OPEN_STATION', stationId })
-        }
-      />
-
-      <StationsBar
-        solvedStations={state.solvedStations}
-        onOpenStation={(stationId) =>
-          dispatch({ type: 'OPEN_STATION', stationId })
-        }
-      />
-
-      {openStation && OpenPuzzle && (
-        <Modal
-          title={
-            <>
-              <span aria-hidden="true">{openStation.icon}</span>
-              תחנה {openStation.order}: {openStation.title}
-            </>
+      <div className="game-main">
+        <ControlRoomViewer
+          solvedStations={state.solvedStations}
+          onOpenStation={(stationId) =>
+            dispatch({ type: 'OPEN_STATION', stationId })
           }
-          onClose={() => dispatch({ type: 'CLOSE_STATION' })}
-        >
+        />
+
+        <StationsBar
+          solvedStations={state.solvedStations}
+          onOpenStation={(stationId) =>
+            dispatch({ type: 'OPEN_STATION', stationId })
+          }
+        />
+
+        {openStation && OpenPuzzle && (
           <OpenPuzzle
             station={openStation}
             hintsUsed={state.hintsUsed[openStation.id] ?? 0}
@@ -69,10 +61,11 @@ export function GameScreen({ state, dispatch }: GameScreenProps) {
             onUseHint={() =>
               dispatch({ type: 'USE_HINT', stationId: openStation.id })
             }
+            onAddFinding={(finding) => dispatch({ type: 'ADD_FINDING', finding })}
             onClose={() => dispatch({ type: 'CLOSE_STATION' })}
           />
-        </Modal>
-      )}
+        )}
+      </div>
 
       {showResetConfirm && (
         <Modal

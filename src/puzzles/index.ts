@@ -1,14 +1,15 @@
 import type { ComponentType } from 'react';
 import type { PuzzleProps, StationId } from '../types/game';
 import { PuzzlePlaceholder } from './PuzzlePlaceholder';
+import { LastPhotoPuzzle } from './LastPhotoPuzzle';
 
 /**
  * רישום רכיבי החידות לפי תחנה.
- * כשכל חידה תמומש, מחליפים כאן את ה-placeholder ברכיב האמיתי, למשל:
- *   'last-photo': LastPhotoPuzzle,
+ * כל רכיב חידה אחראי גם על מעטפת התצוגה שלו (מסוף, חלון וכדומה).
+ * כשחידה ממומשת, מחליפים כאן את ה-placeholder ברכיב האמיתי.
  */
 export const PUZZLE_COMPONENTS: Record<StationId, ComponentType<PuzzleProps>> = {
-  'last-photo': PuzzlePlaceholder,
+  'last-photo': LastPhotoPuzzle,
   'camera-system': PuzzlePlaceholder,
   'transmission-system': PuzzlePlaceholder,
   'power-source': PuzzlePlaceholder,
