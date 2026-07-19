@@ -103,6 +103,14 @@ export function useGameState() {
   return { state, dispatch };
 }
 
+/**
+ * האם כל שש החידות נפתרו.
+ * נקודת החיבור לחידת ההרכבה הסופית: כשהערך הופך true אפשר להפעיל אותה.
+ */
+export function isMissionComplete(solvedStations: StationId[]): boolean {
+  return STATIONS.every((station) => solvedStations.includes(station.id));
+}
+
 /** סטטוס תחנה: פתורה, פעילה (הבאה בתור) או נעולה */
 export function getStationStatus(
   stationId: StationId,

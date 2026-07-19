@@ -1905,6 +1905,235 @@ input {
   width: min(330px, 90%);
 }
 
+/* --- חידה 6: תיק המשימה --- */
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+.step-evidence {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.file-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 860px;
+}
+
+.classified-stamp {
+  color: var(--danger);
+  border: 2px solid var(--danger);
+  border-radius: 6px;
+  padding: 4px 14px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  transform: rotate(-6deg);
+  white-space: nowrap;
+  background: rgba(224, 86, 86, 0.08);
+}
+
+.classified-stamp.approved {
+  color: #3fae7a;
+  border-color: #3fae7a;
+  background: rgba(63, 174, 122, 0.08);
+}
+
+.evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 1060px;
+}
+
+.evidence-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 10px;
+  background: var(--graphite);
+  border: 1px solid var(--graphite-light);
+  border-radius: 12px;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+
+.evidence-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--teal-dim);
+}
+
+.evidence-card.reviewed {
+  border-color: var(--teal);
+  box-shadow: 0 0 12px rgba(45, 212, 200, 0.3);
+}
+
+.evidence-icon {
+  font-size: 2rem;
+}
+
+.evidence-text {
+  text-align: center;
+}
+
+.evidence-grid.compact {
+  grid-template-columns: 1fr;
+  gap: 6px;
+  max-width: none;
+}
+
+.evidence-card.small {
+  flex-direction: row;
+  justify-content: flex-start;
+  text-align: start;
+  padding: 8px 12px;
+  gap: 10px;
+  font-size: 0.88rem;
+}
+
+.evidence-card.small .evidence-icon {
+  font-size: 1.2rem;
+}
+
+.evidence-card.small .evidence-text {
+  text-align: start;
+}
+
+/* --- שלב 2: לוח החקירה --- */
+.step-capability {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.capability-question {
+  font-size: 1.15rem;
+  max-width: 720px;
+  text-align: center;
+}
+
+.capability-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(720px, 100%);
+}
+
+.capability-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  background: var(--graphite);
+  border: 1px solid var(--graphite-light);
+  border-radius: 10px;
+  color: var(--text-main);
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: start;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.capability-option:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--teal-dim);
+}
+
+.capability-option.chosen {
+  border-color: var(--amber);
+}
+
+.capability-option.correct {
+  border-color: #3fae7a;
+  box-shadow: 0 0 12px rgba(63, 174, 122, 0.35);
+}
+
+.capability-letter {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-deep);
+  border: 1px solid var(--teal-dim);
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.step-capability .status-feedback {
+  width: min(720px, 100%);
+}
+
+/* --- שלב 3: תיקי המשימה --- */
+.mission-files {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-option {
+  font-size: 0.95rem;
+  padding: 10px 14px;
+}
+
+.files-side {
+  flex: 0 1 480px;
+}
+
+/* --- שלב 4: התיק המסווג --- */
+.classified-file {
+  position: relative;
+  background:
+    repeating-linear-gradient(0deg, rgba(240, 168, 66, 0.03) 0 2px, transparent 2px 4px),
+    linear-gradient(180deg, #1a2438, #121b2c);
+  border: 1px solid var(--amber);
+  border-radius: 10px;
+  padding: 40px 22px 20px;
+  line-height: 1.8;
+}
+
+.classified-file .classified-stamp {
+  position: absolute;
+  top: 10px;
+  inset-inline-end: 14px;
+  font-size: 0.85rem;
+}
+
+.need-text {
+  color: var(--amber);
+  font-weight: 700;
+  font-size: 1.02rem;
+}
+
+.classified-file.opening {
+  animation: fileOpen 1.6s ease forwards;
+}
+
+.classified-file.open {
+  width: min(680px, 100%);
+  animation: popIn 0.5s ease both;
+  box-shadow: 0 0 26px rgba(240, 168, 66, 0.25);
+}
+
+@keyframes fileOpen {
+  0% { filter: brightness(1); }
+  40% { filter: brightness(1.6); box-shadow: 0 0 30px rgba(240, 168, 66, 0.5); }
+  100% { filter: brightness(1.15); box-shadow: 0 0 18px rgba(240, 168, 66, 0.35); }
+}
+
 .success-bench {
   width: min(400px, 90%);
 }
@@ -2039,5 +2268,13 @@ input {
 
   .terminal-header {
     flex-wrap: wrap;
+  }
+
+  .step-evidence {
+    overflow-y: auto;
+  }
+
+  .evidence-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
