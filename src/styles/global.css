@@ -289,7 +289,7 @@ input {
   user-select: none;
 }
 
-.control-room-viewport:active {
+.control-room-viewport.dragging {
   cursor: grabbing;
 }
 
