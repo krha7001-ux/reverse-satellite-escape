@@ -1529,6 +1529,240 @@ input {
   font-variant-numeric: tabular-nums;
 }
 
+/* --- חידה 4: מעבדת האנרגיה --- */
+.blackout-veil {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  animation: blackoutFade 1.6s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes blackoutFade {
+  0% { opacity: 0; }
+  60% { opacity: 0.55; }
+  100% { opacity: 0.35; }
+}
+
+.solar-svg {
+  width: 100%;
+  height: auto;
+  background:
+    radial-gradient(ellipse at 85% 15%, rgba(240, 168, 66, 0.1), transparent 55%),
+    var(--bg-deep);
+  border: 1px solid var(--teal-dim);
+  border-radius: 10px;
+}
+
+.solar-sun circle {
+  fill: var(--amber);
+  filter: drop-shadow(0 0 14px rgba(240, 168, 66, 0.8));
+}
+
+.solar-sun line {
+  stroke: var(--amber);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.solar-sun {
+  transition: opacity 0.4s;
+}
+
+.solar-sun.dimmed {
+  opacity: 0.15;
+}
+
+.sun-ray {
+  stroke: rgba(240, 168, 66, 0.7);
+  stroke-width: 2.5;
+  stroke-dasharray: 10 8;
+  animation: radioTravel 1.2s linear infinite;
+}
+
+.solar-panel {
+  transition: transform 0.5s ease;
+}
+
+.solar-panel rect {
+  fill: rgba(45, 212, 200, 0.25);
+  stroke: var(--teal);
+  stroke-width: 2;
+}
+
+.solar-panel line {
+  stroke: var(--teal);
+  stroke-width: 1;
+  opacity: 0.7;
+}
+
+.panel-pole {
+  stroke: var(--graphite-light);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.battery-body {
+  fill: var(--graphite);
+  stroke: var(--graphite-light);
+  stroke-width: 2;
+}
+
+.battery-cap {
+  fill: var(--graphite-light);
+}
+
+.battery-fill {
+  fill: rgba(63, 174, 122, 0.5);
+  transition: fill 0.4s;
+}
+
+.battery-fill.charging {
+  fill: #3fae7a;
+  animation: batteryPulse 1.2s ease-in-out infinite;
+}
+
+.battery-fill.draining {
+  fill: var(--amber);
+  animation: batteryPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes batteryPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.energy-flow {
+  fill: none;
+  stroke: #3fae7a;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 8 8;
+  filter: drop-shadow(0 0 4px rgba(63, 174, 122, 0.7));
+  animation: radioTravel 0.9s linear infinite;
+}
+
+.energy-flow.reverse {
+  stroke: var(--amber);
+  filter: drop-shadow(0 0 4px rgba(240, 168, 66, 0.7));
+}
+
+.systems-box {
+  fill: var(--graphite);
+  stroke: var(--graphite-light);
+  stroke-width: 1.5;
+}
+
+/* מד הספק */
+.power-meter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.power-meter-label {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+.power-meter {
+  flex: 1;
+  height: 14px;
+  background: var(--bg-deep);
+  border: 1px solid var(--graphite-light);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.power-meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal-dim), var(--teal));
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.power-meter.danger {
+  border-color: var(--danger);
+}
+
+.power-meter.danger .power-meter-fill {
+  background: linear-gradient(90deg, #8f3232, var(--danger));
+}
+
+.power-meter.ok {
+  border-color: #3fae7a;
+}
+
+.power-meter.ok .power-meter-fill {
+  background: linear-gradient(90deg, #2a7a55, #3fae7a);
+}
+
+.power-meter-value {
+  color: var(--teal);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 64px;
+}
+
+.shade-toggle {
+  align-self: flex-start;
+}
+
+.shade-toggle.active {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.system-card .system-watts {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+.system-card.placed .system-watts {
+  color: var(--teal);
+}
+
+.element-card.blink {
+  animation: blinkWarn 0.7s ease-in-out infinite;
+  border-color: var(--danger);
+}
+
+@keyframes blinkWarn {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.budget-bench {
+  gap: 8px;
+}
+
+.budget-calc {
+  font-variant-numeric: tabular-nums;
+}
+
+.lit-systems-row {
+  display: flex;
+  gap: 14px;
+}
+
+.lit-system {
+  color: var(--text-dim);
+  background: var(--graphite);
+  border: 1px solid var(--graphite-light);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 0.92rem;
+  transition: color 0.4s, border-color 0.4s, box-shadow 0.4s;
+}
+
+.lit-system.on {
+  color: var(--teal);
+  border-color: var(--teal);
+  box-shadow: 0 0 10px rgba(45, 212, 200, 0.35);
+}
+
 .success-bench {
   width: min(400px, 90%);
 }

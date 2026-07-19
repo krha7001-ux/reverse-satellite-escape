@@ -4,6 +4,7 @@ import { PuzzlePlaceholder } from './PuzzlePlaceholder';
 import { LastPhotoPuzzle } from './LastPhotoPuzzle';
 import { CameraPuzzle } from './CameraPuzzle';
 import { TransmissionPuzzle } from './TransmissionPuzzle';
+import { PowerPuzzle } from './PowerPuzzle';
 
 /**
  * רישום רכיבי החידות לפי תחנה.
@@ -14,7 +15,7 @@ export const PUZZLE_COMPONENTS: Record<StationId, ComponentType<PuzzleProps>> = 
   'last-photo': LastPhotoPuzzle,
   'camera-system': CameraPuzzle,
   'transmission-system': TransmissionPuzzle,
-  'power-source': PuzzlePlaceholder,
+  'power-source': PowerPuzzle,
   'orbit': PuzzlePlaceholder,
   'mission-file': PuzzlePlaceholder,
 };
