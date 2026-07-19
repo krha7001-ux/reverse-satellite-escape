@@ -1318,6 +1318,217 @@ input {
   font-size: 0.95rem;
 }
 
+/* --- חידה 3: תא הניסוי --- */
+.chamber-svg {
+  width: 100%;
+  height: auto;
+  background: var(--bg-deep);
+  border: 1px solid var(--teal-dim);
+  border-radius: 10px;
+}
+
+.chamber-wall {
+  fill: none;
+  stroke: var(--graphite-light);
+  stroke-width: 2;
+}
+
+.chamber-air {
+  fill: #7fd4ff;
+  transition: opacity 0.25s;
+}
+
+.chamber-node rect {
+  fill: var(--graphite);
+  stroke: var(--graphite-light);
+  stroke-width: 1.5;
+}
+
+.chamber-label {
+  fill: var(--text-dim);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.chamber-hint {
+  fill: var(--text-dim);
+  font-size: 15px;
+}
+
+.chamber-warning {
+  fill: var(--amber);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.speaker-glyph path {
+  fill: var(--amber);
+}
+
+.antenna-mast {
+  stroke: var(--teal);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.sound-wave {
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: opacity 0.25s;
+  animation: soundPulse 1.1s ease-in-out infinite;
+}
+
+@keyframes soundPulse {
+  0%, 100% { stroke-width: 3; }
+  50% { stroke-width: 4.5; }
+}
+
+.cable-line {
+  fill: none;
+  stroke: #9fc0d4;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.cable-note-bg {
+  fill: var(--amber-soft);
+  stroke: var(--amber);
+  stroke-width: 1;
+}
+
+.cable-note {
+  fill: var(--amber);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.radio-wave {
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 12 10;
+  filter: drop-shadow(0 0 4px rgba(45, 212, 200, 0.7));
+  animation: radioTravel 1.4s linear infinite;
+}
+
+@keyframes radioTravel {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 44; }
+}
+
+.medium-icon {
+  font-size: 1.4rem;
+}
+
+.choice-progress {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+}
+
+.choice-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn 0.35s ease both;
+}
+
+/* --- חידה 3: הדמיית השידור --- */
+.transfer-svg {
+  width: 100%;
+  height: auto;
+  background: var(--bg-deep);
+  border: 1px solid var(--teal-dim);
+  border-radius: 10px;
+}
+
+.transfer-node rect {
+  fill: var(--graphite);
+  stroke: var(--graphite-light);
+  stroke-width: 1.5;
+}
+
+.solar-cell {
+  fill: rgba(45, 212, 200, 0.3) !important;
+  stroke: var(--teal) !important;
+}
+
+.station-dish path {
+  fill: rgba(45, 212, 200, 0.25);
+  stroke: var(--teal);
+  stroke-width: 2;
+}
+
+.station-dish line {
+  stroke: var(--teal);
+  stroke-width: 2;
+}
+
+.station-dish {
+  transform: rotate(-24deg);
+  transition: transform 0.8s ease;
+}
+
+.station-dish.lock {
+  animation: dishLock 1s ease forwards;
+}
+
+@keyframes dishLock {
+  0% { transform: rotate(-24deg); }
+  70% { transform: rotate(6deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.transfer-track {
+  stroke: var(--graphite-light);
+  stroke-width: 2;
+  stroke-dasharray: 5 7;
+}
+
+.packet {
+  transition: transform 0.85s linear;
+}
+
+.packet rect {
+  fill: var(--amber-soft);
+  stroke: var(--amber);
+  stroke-width: 1.5;
+}
+
+.packet text {
+  fill: var(--amber);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.packet.delivered rect {
+  fill: rgba(45, 212, 200, 0.18);
+  stroke: var(--teal);
+}
+
+.packet.delivered text {
+  fill: var(--teal);
+}
+
+.transfer-area {
+  gap: 10px;
+}
+
+.transfer-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 2.6em;
+}
+
+.transfer-counter {
+  color: var(--teal);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .success-bench {
   width: min(400px, 90%);
 }
