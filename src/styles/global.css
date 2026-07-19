@@ -1763,6 +1763,148 @@ input {
   box-shadow: 0 0 10px rgba(45, 212, 200, 0.35);
 }
 
+/* --- חידה 5: סימולטור המסלול --- */
+.orbit-sim {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.orbit-svg {
+  width: 100%;
+  height: auto;
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(45, 212, 200, 0.05), transparent 65%),
+    var(--bg-deep);
+  border: 1px solid var(--teal-dim);
+  border-radius: 10px;
+}
+
+.earth-body {
+  fill: #1c4d7a;
+  stroke: #3a7ab3;
+  stroke-width: 2;
+}
+
+.earth-glow {
+  fill: none;
+  stroke: rgba(88, 166, 224, 0.4);
+  stroke-width: 6;
+  filter: blur(3px);
+}
+
+.earth-label {
+  fill: #9fc9ea;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.altitude-ring {
+  fill: none;
+  stroke: var(--graphite-light);
+  stroke-width: 1;
+  stroke-dasharray: 4 7;
+  opacity: 0.7;
+}
+
+.orbit-trail {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.orbit-trail.current {
+  stroke: var(--text-main);
+  opacity: 0.9;
+}
+
+.orbit-trail.past {
+  opacity: 0.5;
+}
+
+.gravity-arrow {
+  stroke: #e05656;
+  stroke-width: 2.5;
+}
+
+.velocity-arrow {
+  stroke: var(--teal);
+  stroke-width: 2.5;
+}
+
+.orbit-satellite rect {
+  fill: var(--graphite-light);
+  stroke: var(--text-main);
+  stroke-width: 1.5;
+}
+
+.orbit-satellite line {
+  stroke: var(--teal);
+  stroke-width: 3;
+}
+
+.orbit-legend text {
+  fill: var(--text-dim);
+  font-size: 12px;
+}
+
+.orbit-bench {
+  flex: 0 1 460px;
+}
+
+.orbit-bench.compact {
+  flex: 0 1 380px;
+}
+
+.scale-note {
+  font-size: 0.92rem;
+}
+
+.speed-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.speed-button {
+  font-variant-numeric: tabular-nums;
+  border-inline-start-width: 4px;
+}
+
+.speed-button small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.speed-button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.mission-speeds {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.orbit-final {
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 8px rgba(45, 212, 200, 0.8));
+  stroke-dasharray: 691;
+  stroke-dashoffset: 691;
+  animation: orbitDraw 1.8s ease forwards;
+}
+
+@keyframes orbitDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+.success-bench.orbit-success {
+  width: min(330px, 90%);
+}
+
 .success-bench {
   width: min(400px, 90%);
 }
