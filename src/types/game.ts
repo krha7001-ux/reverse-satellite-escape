@@ -42,6 +42,8 @@ export interface GameState {
   teamName: string;
   /** חותמת זמן של תחילת המשימה (למדידת 60 דקות) */
   startedAt: number | null;
+  /** צילום מצב של הזמן שנותר, נשמר ב-localStorage יחד עם זמן ההתחלה */
+  remainingSeconds?: number;
   /** תחנות שנפתרו, לפי סדר הפתרון */
   solvedStations: StationId[];
   /** התחנה שחלון החידה שלה פתוח כרגע (null = אין חלון פתוח) */

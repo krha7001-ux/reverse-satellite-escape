@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from 'react';
 import type { GameAction, GameState, StationId } from '../types/game';
-import { STATIONS } from '../data/stations';
+import { MISSION_DURATION_SECONDS, STATIONS } from '../data/stations';
 
 const STORAGE_KEY = 'reverse-satellite-escape/game-state/v1';
 
@@ -14,6 +14,13 @@ export const INITIAL_STATE: GameState = {
   findings: [],
   muted: false,
 };
+
+/** הזמן שנותר למשימה בשניות, נגזר מזמן ההתחלה */
+export function remainingSecondsFor(startedAt: number | null): number {
+  if (startedAt === null) return MISSION_DURATION_SECONDS;
+  const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+  return Math.max(0, MISSION_DURATION_SECONDS - elapsed);
+}
 
 function loadState(): GameState {
   try {
@@ -29,7 +36,14 @@ function loadState(): GameState {
 
 function saveState(state: GameState) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    // זמן ההתחלה והזמן שנותר נשמרים יחד, כצילום מצב עקבי
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        ...state,
+        remainingSeconds: remainingSecondsFor(state.startedAt),
+      }),
+    );
   } catch {
     // אין אחסון זמין — ממשיכים בלי שמירה
   }
@@ -37,13 +51,17 @@ function saveState(state: GameState) {
 
 function reducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
-    case 'START_MISSION':
+    case 'START_MISSION': {
+      // משחק חדש (או משחק שמור שפג תוקפו) מתחיל תמיד ב-60:00 מלאות
+      const isStale =
+        state.startedAt !== null && remainingSecondsFor(state.startedAt) <= 0;
       return {
         ...state,
         phase: 'playing',
         teamName: action.teamName.trim(),
-        startedAt: state.startedAt ?? Date.now(),
+        startedAt: state.startedAt === null || isStale ? Date.now() : state.startedAt,
       };
+    }
     case 'OPEN_STATION':
       return { ...state, openStation: action.stationId };
     case 'CLOSE_STATION':

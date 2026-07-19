@@ -677,8 +677,8 @@ input {
   align-items: stretch;
   justify-content: center;
   padding: 18px;
-  background: rgba(2, 6, 13, 0.78);
-  backdrop-filter: blur(2px);
+  background: rgba(2, 6, 13, 0.72);
+  backdrop-filter: blur(6px);
   animation: fadeIn 0.45s ease both;
 }
 
@@ -728,15 +728,41 @@ input {
   letter-spacing: 0.04em;
 }
 
-/* --- שלב הפרעת השידור --- */
-.terminal-boot {
-  position: relative;
+.step-chip {
+  color: var(--amber);
+  font-size: 0.88rem;
+  font-weight: 700;
+  background: var(--amber-soft);
+  border: 1px solid var(--amber);
+  border-radius: 999px;
+  padding: 3px 14px;
+  white-space: nowrap;
+}
+
+/* --- מבנה שלב כללי --- */
+.terminal-step {
   flex: 1;
+  min-height: 0;
   display: flex;
+  padding: 16px 22px 20px;
+  animation: fadeIn 0.35s ease both;
+}
+
+/* --- שלב א: קליטת השידור --- */
+.step-boot {
+  position: relative;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  gap: 22px;
   overflow: hidden;
+}
+
+.step-boot .step-next {
+  position: relative;
+  z-index: 1;
+  font-size: 1.1rem;
+  padding: 12px 30px;
 }
 
 .static-noise {
@@ -775,42 +801,32 @@ input {
   animation: fadeIn 0.6s ease 0.5s both;
 }
 
-/* --- גוף המסוף --- */
-.terminal-body {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 14px 18px 18px;
-  animation: fadeIn 0.4s ease both;
+/* --- שלב ב: התנסות --- */
+.step-explore {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
 }
 
-.system-line {
-  color: var(--amber);
-  font-size: 0.98rem;
-  border-right: 3px solid var(--amber);
-  background: var(--amber-soft);
-  border-radius: 6px;
-  padding: 8px 12px;
-  margin-bottom: 14px;
+.explore-photo .photo-canvas {
+  width: min(52vh, 430px);
 }
 
-.terminal-grid {
-  display: grid;
-  grid-template-columns: minmax(280px, 420px) 1fr;
-  gap: 20px;
-  align-items: start;
-}
-
-/* --- פאנל התצלום --- */
-.photo-panel {
+.explore-side {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  flex: 0 1 560px;
+}
+
+.instruction-line {
+  color: var(--amber);
+  font-weight: 700;
+  font-size: 1.05rem;
 }
 
 .photo-canvas {
-  width: 100%;
-  max-width: 420px;
   aspect-ratio: 1;
   height: auto;
   border: 1px solid var(--teal-dim);
@@ -818,7 +834,7 @@ input {
   background: #000;
   image-rendering: pixelated;
   box-shadow: 0 0 24px rgba(45, 212, 200, 0.12);
-  align-self: center;
+  display: block;
 }
 
 .slider-label {
@@ -858,20 +874,36 @@ input {
   font-variant-numeric: tabular-nums;
 }
 
-/* --- פאנל המשימה --- */
-.control-panel {
+.science-note {
+  color: var(--text-dim);
+  line-height: 1.55;
+  font-size: 0.88rem;
+}
+
+/* --- שלב ג: המשימה --- */
+.step-mission {
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 36px;
+}
+
+.mission-side {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  flex: 0 1 430px;
   min-width: 0;
 }
 
-.science-note {
-  color: var(--text-dim);
-  line-height: 1.7;
-  font-size: 0.95rem;
-  border-right: 3px solid var(--teal-dim);
-  padding-right: 10px;
+.keypad-side {
+  flex: 0 0 300px;
+  align-items: center;
+  gap: 10px;
+}
+
+.mission-photo .photo-canvas {
+  width: 168px;
 }
 
 .mission-message {
@@ -917,12 +949,28 @@ input {
   box-shadow: 0 0 12px rgba(45, 212, 200, 0.35);
 }
 
-/* --- קודן --- */
+/* --- קודן קומפקטי --- */
 .keypad-block {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-width: 300px;
+  gap: 7px;
+  width: 100%;
+  min-height: 300px;
+  animation: fadeIn 0.3s ease both;
+}
+
+.keypad-waiting {
+  width: 100%;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-dim);
+  border: 1px dashed var(--graphite-light);
+  border-radius: 10px;
+  padding: 16px;
+  line-height: 1.6;
 }
 
 .keypad-display {
@@ -930,12 +978,12 @@ input {
   border: 1px solid var(--teal-dim);
   border-radius: 8px;
   color: var(--teal);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   text-align: center;
-  padding: 10px 12px;
-  min-height: 46px;
+  padding: 8px 12px;
+  min-height: 40px;
 }
 
 .keypad-display:empty::before {
@@ -949,8 +997,8 @@ input {
 }
 
 .keypad-key {
-  padding: 10px 0;
-  font-size: 1.1rem;
+  padding: 8px 0;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--text-main);
   background: var(--graphite);
@@ -974,54 +1022,64 @@ input {
   width: 100%;
 }
 
-.feedback-line {
+/* --- אזור מצב קבוע: משוב ורמז --- */
+.status-area {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-feedback {
+  min-height: 3.4em;
+  display: flex;
+  align-items: center;
   color: var(--amber);
   background: var(--amber-soft);
   border: 1px solid var(--amber);
   border-radius: 8px;
-  padding: 10px 12px;
-  line-height: 1.6;
-  animation: popIn 0.25s ease both;
+  padding: 8px 12px;
+  line-height: 1.55;
+  transition: opacity 0.2s;
 }
 
-/* --- רמזים --- */
-.hints-block {
+.status-feedback.empty {
+  color: var(--text-dim);
+  background: transparent;
+  border-color: var(--graphite-light);
+}
+
+.status-hint {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
+  min-height: 3.2em;
 }
 
 .hint-button {
-  align-self: flex-start;
+  flex: 0 0 auto;
 }
 
-.hints-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.hint-text {
+  color: var(--teal);
+  line-height: 1.5;
+  flex: 1;
 }
 
-.hints-list li {
+.hint-text.empty {
   color: var(--text-dim);
-  border-right: 3px solid var(--teal);
-  background: rgba(45, 212, 200, 0.06);
-  border-radius: 6px;
-  padding: 8px 12px;
-  line-height: 1.6;
-  animation: popIn 0.3s ease both;
 }
 
-/* --- שחזור והצלחה --- */
-.success-body {
-  display: flex;
+/* --- שלב ד: הצלחה --- */
+.step-success {
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  justify-content: center;
+  gap: 12px;
+  overflow-y: auto;
 }
 
 .photo-restore {
-  width: min(380px, 70vw);
+  width: min(34vh, 300px);
   transition: filter 0.5s;
   filter: brightness(0.9);
 }
@@ -1099,12 +1157,24 @@ input {
     height: 38px;
   }
 
-  .terminal-grid {
-    grid-template-columns: 1fr;
+  /* טאבלט: האזורים נערמים זה מתחת לזה, גלילה רק אם הכרחי */
+  .step-explore,
+  .step-mission {
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    gap: 18px;
   }
 
-  .photo-canvas {
-    max-width: 340px;
+  .explore-photo .photo-canvas {
+    width: min(44vh, 380px);
+  }
+
+  .mission-side,
+  .keypad-side {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 460px;
   }
 
   .puzzle-overlay {
