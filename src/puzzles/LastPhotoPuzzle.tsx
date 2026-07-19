@@ -13,13 +13,16 @@ import {
   MISSION_MESSAGE,
   MISSION_OPTIONS,
   RESOLUTION_LEVELS,
+  RESTORE_INSTRUCTION,
   SCIENCE_NOTE,
   SUCCESS_MESSAGE,
   TRANSITION_MESSAGE,
 } from '../data/lastPhotoPuzzle';
 import { drawAerialScene, SOURCE_SIZE } from './aerialPhoto';
 
-type Phase = 'boot' | 'play' | 'restoring' | 'solved';
+/** שלבי החידה: קליטה → התנסות → משימה → הצלחה */
+type Step = 1 | 2 | 3 | 4;
+const TOTAL_STEPS = 4;
 
 const formatNumber = (n: number) => n.toLocaleString('he-IL');
 
@@ -64,7 +67,7 @@ function PixelatedPhoto({ resolution }: { resolution: number }) {
   );
 }
 
-/** חידה 1: התצלום האחרון — רזולוציה ופיקסלים */
+/** חידה 1: התצלום האחרון — רזולוציה ופיקסלים, בארבעה שלבים */
 export function LastPhotoPuzzle({
   hintsUsed,
   onSolve,
@@ -72,49 +75,41 @@ export function LastPhotoPuzzle({
   onAddFinding,
   onClose,
 }: PuzzleProps) {
-  const [phase, setPhase] = useState<Phase>('boot');
-  const [resolution, setResolution] = useState<number>(RESOLUTION_LEVELS[0]);
+  const [step, setStep] = useState<Step>(1);
+  const [resolution, setResolution] = useState<number>(64);
   const [chosen, setChosen] = useState<number | null>(null);
   const [code, setCode] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [restoring, setRestoring] = useState(false);
   const solvedRef = useRef(false);
-
-  // אפקט הפרעת השידור בפתיחה
-  useEffect(() => {
-    if (phase !== 'boot') return;
-    const timer = setTimeout(() => setPhase('play'), 1800);
-    return () => clearTimeout(timer);
-  }, [phase]);
 
   // גישה יציבה ל-callbacks — הרכיב ההורה מתרנדר כל שנייה בגלל הטיימר,
   // ותלות ישירה בהם הייתה מאפסת את אנימציית השחזור שוב ושוב
   const callbacksRef = useRef({ onAddFinding, onSolve });
   callbacksRef.current = { onAddFinding, onSolve };
 
-  // אנימציית השחזור: התמונה מתחדדת בהדרגה עד לרזולוציה הנכונה
+  // שלב ד: אנימציית שחזור קצרה — התמונה מתחדדת עד לרזולוציה הנכונה
   useEffect(() => {
-    if (phase !== 'restoring') return;
-    const steps: Array<[number, number]> = [
-      [8, 0],
-      [16, 450],
-      [CORRECT_RESOLUTION, 900],
+    if (step !== 4) return;
+    setRestoring(true);
+    const timers = [
+      setTimeout(() => setResolution(8), 0),
+      setTimeout(() => setResolution(16), 400),
+      setTimeout(() => setResolution(CORRECT_RESOLUTION), 800),
     ];
-    const timers = steps.map(([res, delay]) =>
-      setTimeout(() => setResolution(res), delay),
-    );
     const done = setTimeout(() => {
       if (!solvedRef.current) {
         solvedRef.current = true;
         callbacksRef.current.onAddFinding(LAST_PHOTO_FINDING);
         callbacksRef.current.onSolve();
       }
-      setPhase('solved');
-    }, 1700);
+      setRestoring(false);
+    }, 1500);
     return () => {
       timers.forEach(clearTimeout);
       clearTimeout(done);
     };
-  }, [phase]);
+  }, [step]);
 
   const chooseOption = (option: number) => {
     setChosen(option);
@@ -138,12 +133,11 @@ export function LastPhotoPuzzle({
       setFeedback(FEEDBACK_WRONG_CODE);
     } else {
       setFeedback(null);
-      setResolution(8);
-      setPhase('restoring');
+      setStep(4);
     }
   };
 
-  const revealedHints = HINTS.slice(0, Math.min(hintsUsed, HINTS.length));
+  const currentHint = hintsUsed > 0 ? HINTS[Math.min(hintsUsed, HINTS.length) - 1] : null;
 
   return (
     <div className="puzzle-overlay">
@@ -153,78 +147,133 @@ export function LastPhotoPuzzle({
             <span aria-hidden="true">🛰️</span>
             מסוף הדמיה · התצלום האחרון
           </span>
+          <span className="step-chip">שלב {step} מתוך {TOTAL_STEPS}</span>
           <button type="button" className="modal-button" onClick={onClose}>
             חזרה לחדר הבקרה
           </button>
         </header>
 
-        {phase === 'boot' && (
-          <div className="terminal-boot">
+        {/* שלב א — קליטת השידור */}
+        {step === 1 && (
+          <div className="terminal-step step-boot">
             <div className="static-noise" aria-hidden="true" />
             <p className="boot-message">{BOOT_MESSAGE}</p>
+            <button
+              type="button"
+              className="modal-button primary step-next"
+              onClick={() => setStep(2)}
+            >
+              התחילו בשחזור
+            </button>
           </div>
         )}
 
-        {phase === 'play' && (
-          <div className="terminal-body">
-            <p className="system-line">{BOOT_MESSAGE}</p>
+        {/* שלב ב — התנסות */}
+        {step === 2 && (
+          <div className="terminal-step step-explore">
+            <div className="explore-photo">
+              <PixelatedPhoto resolution={resolution} />
+            </div>
+            <div className="explore-side">
+              <p className="instruction-line">{RESTORE_INSTRUCTION}</p>
+              <label className="slider-label" htmlFor="resolution-slider">
+                רמת רזולוציה
+              </label>
+              <input
+                id="resolution-slider"
+                className="resolution-slider"
+                type="range"
+                min={0}
+                max={RESOLUTION_LEVELS.length - 1}
+                step={1}
+                value={Math.max(0, RESOLUTION_LEVELS.indexOf(resolution))}
+                onChange={(e) =>
+                  setResolution(RESOLUTION_LEVELS[Number(e.target.value)])
+                }
+              />
+              <div className="slider-ticks" aria-hidden="true">
+                {RESOLUTION_LEVELS.map((level) => (
+                  <span
+                    key={level}
+                    className={level === resolution ? 'tick current' : 'tick'}
+                  >
+                    {level}×{level}
+                  </span>
+                ))}
+              </div>
+              <p className="pixel-count" aria-live="polite">
+                מספר הפיקסלים: {resolution} × {resolution} ={' '}
+                <strong>{formatNumber(resolution * resolution)}</strong>
+              </p>
+              <p className="science-note">{SCIENCE_NOTE}</p>
+              <button
+                type="button"
+                className="modal-button primary step-next"
+                onClick={() => {
+                  setResolution(chosen ?? 64);
+                  setStep(3);
+                }}
+              >
+                עברו למשימה
+              </button>
+            </div>
+          </div>
+        )}
 
-            <div className="terminal-grid">
-              <section className="photo-panel">
-                <PixelatedPhoto resolution={resolution} />
+        {/* שלב ג — המשימה */}
+        {step === 3 && (
+          <div className="terminal-step step-mission">
+            <div className="mission-side">
+              <p className="mission-message">{MISSION_MESSAGE}</p>
+              <div className="option-row" role="group" aria-label="בחירת רזולוציה">
+                {MISSION_OPTIONS.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    className={`option-button${chosen === option ? ' chosen' : ''}`}
+                    onClick={() => chooseOption(option)}
+                  >
+                    {option}×{option}
+                  </button>
+                ))}
+              </div>
 
-                <label className="slider-label" htmlFor="resolution-slider">
-                  רמת רזולוציה
-                </label>
-                <input
-                  id="resolution-slider"
-                  className="resolution-slider"
-                  type="range"
-                  min={0}
-                  max={RESOLUTION_LEVELS.length - 1}
-                  step={1}
-                  value={Math.max(0, RESOLUTION_LEVELS.indexOf(resolution))}
-                  onChange={(e) =>
-                    setResolution(RESOLUTION_LEVELS[Number(e.target.value)])
-                  }
-                />
-                <div className="slider-ticks" aria-hidden="true">
-                  {RESOLUTION_LEVELS.map((level) => (
-                    <span
-                      key={level}
-                      className={level === resolution ? 'tick current' : 'tick'}
-                    >
-                      {level}×{level}
-                    </span>
-                  ))}
-                </div>
-
-                <p className="pixel-count" aria-live="polite">
-                  מספר הפיקסלים: {resolution} × {resolution} ={' '}
-                  <strong>{formatNumber(resolution * resolution)}</strong>
+              {/* אזור קבוע למשוב ולרמז — לא מזיז את יתר הממשק */}
+              <div className="status-area">
+                <p
+                  className={`status-feedback${feedback ? '' : ' empty'}`}
+                  role={feedback ? 'alert' : undefined}
+                >
+                  {feedback ?? 'בחרו רזולוציה, הזינו את מספר הפיקסלים ושדרו.'}
                 </p>
-              </section>
-
-              <section className="control-panel">
-                <p className="science-note">{SCIENCE_NOTE}</p>
-                <p className="mission-message">{MISSION_MESSAGE}</p>
-
-                <div className="option-row" role="group" aria-label="בחירת רזולוציה">
-                  {MISSION_OPTIONS.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      className={`option-button${chosen === option ? ' chosen' : ''}`}
-                      onClick={() => chooseOption(option)}
-                    >
-                      {option}×{option}
-                    </button>
-                  ))}
+                <div className="status-hint">
+                  <button
+                    type="button"
+                    className="modal-button hint-button"
+                    onClick={onUseHint}
+                    disabled={hintsUsed >= HINTS.length}
+                  >
+                    רמז ({hintsUsed}/{HINTS.length})
+                  </button>
+                  <span className={`hint-text${currentHint ? '' : ' empty'}`}>
+                    {currentHint ?? 'זקוקים לכיוון? בקשו רמז.'}
+                  </span>
                 </div>
+              </div>
+            </div>
 
+            <div className="mission-side keypad-side">
+              <div className="mission-photo">
+                <PixelatedPhoto resolution={resolution} />
+              </div>
+              {chosen === null ? (
+                <div className="keypad-waiting">
+                  בחרו רזולוציה כדי להפעיל את הקודן
+                </div>
+              ) : (
                 <div className="keypad-block">
                   <div className="keypad-display" aria-live="polite">
-                    {code === '' ? 'הזינו את מספר הפיקסלים הכולל' : code}
+                    {code === '' ? 'מספר הפיקסלים הכולל' : code}
                   </div>
                   <div className="keypad">
                     {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((d) => (
@@ -259,48 +308,28 @@ export function LastPhotoPuzzle({
                       ⌫
                     </button>
                   </div>
-                  <button type="button" className="modal-button primary submit-button" onClick={submit}>
+                  <button
+                    type="button"
+                    className="modal-button primary submit-button"
+                    onClick={submit}
+                  >
                     שידור לתחנת הקרקע
                   </button>
                 </div>
-
-                {feedback && (
-                  <p className="feedback-line" role="alert">
-                    {feedback}
-                  </p>
-                )}
-
-                <div className="hints-block">
-                  <button
-                    type="button"
-                    className="modal-button hint-button"
-                    onClick={onUseHint}
-                    disabled={hintsUsed >= HINTS.length}
-                  >
-                    רמז ({hintsUsed}/{HINTS.length})
-                  </button>
-                  {revealedHints.length > 0 && (
-                    <ul className="hints-list">
-                      {revealedHints.map((hint, i) => (
-                        <li key={i}>{hint}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </section>
+              )}
             </div>
           </div>
         )}
 
-        {(phase === 'restoring' || phase === 'solved') && (
-          <div className="terminal-body success-body">
-            <div className={`photo-restore${phase === 'solved' ? ' done' : ''}`}>
+        {/* שלב ד — הצלחה */}
+        {step === 4 && (
+          <div className="terminal-step step-success">
+            <div className={`photo-restore${restoring ? '' : ' done'}`}>
               <PixelatedPhoto resolution={resolution} />
             </div>
-            {phase === 'restoring' && (
-              <p className="system-line">משחזר את התצלום…</p>
-            )}
-            {phase === 'solved' && (
+            {restoring ? (
+              <p className="instruction-line">משחזר את התצלום…</p>
+            ) : (
               <div className="success-panel">
                 <p className="success-message">✔ {SUCCESS_MESSAGE}</p>
                 <div className="finding-card">
