@@ -18,54 +18,13 @@ import {
   SUCCESS_MESSAGE,
   TRANSITION_MESSAGE,
 } from '../data/lastPhotoPuzzle';
-import { drawAerialScene, SOURCE_SIZE } from './aerialPhoto';
+import { PixelatedPhoto } from './PixelatedPhoto';
 
 /** שלבי החידה: קליטה → התנסות → משימה → הצלחה */
 type Step = 1 | 2 | 3 | 4;
 const TOTAL_STEPS = 4;
 
 const formatNumber = (n: number) => n.toLocaleString('he-IL');
-
-/** התצלום האווירי, מפוקסל בפועל לפי הרזולוציה הנבחרת */
-function PixelatedPhoto({ resolution }: { resolution: number }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const sourceRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    if (!sourceRef.current) {
-      const source = document.createElement('canvas');
-      source.width = SOURCE_SIZE;
-      source.height = SOURCE_SIZE;
-      drawAerialScene(source.getContext('2d')!);
-      sourceRef.current = source;
-    }
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d')!;
-
-    // דגימה לרזולוציה הנמוכה ואז הגדלה ללא החלקה — פיקסול אמיתי
-    const small = document.createElement('canvas');
-    small.width = resolution;
-    small.height = resolution;
-    const smallCtx = small.getContext('2d')!;
-    smallCtx.imageSmoothingEnabled = true;
-    smallCtx.drawImage(sourceRef.current, 0, 0, resolution, resolution);
-
-    ctx.imageSmoothingEnabled = false;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(small, 0, 0, canvas.width, canvas.height);
-  }, [resolution]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="photo-canvas"
-      width={512}
-      height={512}
-      aria-label={`תצלום אווירי ברזולוציה ${resolution}×${resolution}`}
-    />
-  );
-}
 
 /** חידה 1: התצלום האחרון — רזולוציה ופיקסלים, בארבעה שלבים */
 export function LastPhotoPuzzle({
@@ -80,7 +39,8 @@ export function LastPhotoPuzzle({
   const [chosen, setChosen] = useState<number | null>(null);
   const [code, setCode] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [restoring, setRestoring] = useState(false);
+  // מאותחל ל-true כדי שכניסה לשלב 4 תתחיל באנימציית השחזור ללא הבזק
+  const [restoring, setRestoring] = useState(true);
   const solvedRef = useRef(false);
 
   // גישה יציבה ל-callbacks — הרכיב ההורה מתרנדר כל שנייה בגלל הטיימר,
