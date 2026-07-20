@@ -13,6 +13,7 @@ export const INITIAL_STATE: GameState = {
   hintsUsed: {},
   findings: [],
   muted: false,
+  finalAssembly: { completed: false, remainingSeconds: null },
 };
 
 /** הזמן שנותר למשימה בשניות, נגזר מזמן ההתחלה */
@@ -27,8 +28,17 @@ function loadState(): GameState {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return INITIAL_STATE;
     const parsed = JSON.parse(raw) as Partial<GameState>;
-    // מיזוג עם מצב ההתחלה כדי לשרוד שינויי מבנה עתידיים
-    return { ...INITIAL_STATE, ...parsed, openStation: null };
+    // מיזוג עם מצב ההתחלה כדי לשרוד שינויי מבנה עתידיים,
+    // כולל שמירות ישנות שנוצרו לפני חידת הסיום
+    return {
+      ...INITIAL_STATE,
+      ...parsed,
+      openStation: null,
+      finalAssembly: {
+        ...INITIAL_STATE.finalAssembly,
+        ...(parsed.finalAssembly ?? {}),
+      },
+    };
   } catch {
     return INITIAL_STATE;
   }
@@ -87,6 +97,15 @@ function reducer(state: GameState, action: GameAction): GameState {
       return { ...state, findings: [...state.findings, action.finding] };
     case 'TOGGLE_MUTE':
       return { ...state, muted: !state.muted };
+    case 'COMPLETE_FINAL_ASSEMBLY':
+      if (state.finalAssembly.completed) return state;
+      return {
+        ...state,
+        finalAssembly: {
+          completed: true,
+          remainingSeconds: action.remainingSeconds,
+        },
+      };
     case 'RESET':
       return INITIAL_STATE;
   }

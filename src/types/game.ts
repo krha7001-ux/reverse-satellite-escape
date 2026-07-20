@@ -36,6 +36,13 @@ export interface FindingCard {
   content: string;
 }
 
+/** מצב חידת הסיום (ההרכבה הסופית) */
+export interface FinalAssemblyState {
+  completed: boolean;
+  /** הזמן שנותר בטיימר ברגע השלמת רצף ההפעלה */
+  remainingSeconds: number | null;
+}
+
 export interface GameState {
   /** האם המשחק התחיל (מעבר ממסך פתיחה) */
   phase: 'start' | 'playing';
@@ -54,6 +61,8 @@ export interface GameState {
   findings: FindingCard[];
   /** השתקת צלילים */
   muted: boolean;
+  /** חידת הסיום: הושלמה + נתוני סיום */
+  finalAssembly: FinalAssemblyState;
 }
 
 export type GameAction =
@@ -64,6 +73,7 @@ export type GameAction =
   | { type: 'USE_HINT'; stationId: StationId }
   | { type: 'ADD_FINDING'; finding: FindingCard }
   | { type: 'TOGGLE_MUTE' }
+  | { type: 'COMPLETE_FINAL_ASSEMBLY'; remainingSeconds: number }
   | { type: 'RESET' };
 
 /** Props אחידים שכל רכיב חידה עתידי יקבל */

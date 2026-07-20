@@ -10,6 +10,9 @@ import type { StationId } from '../types/game';
 interface ControlRoomViewerProps {
   solvedStations: StationId[];
   onOpenStation: (stationId: StationId) => void;
+  /** הצגת מוקד ההרכבה הסופית במרכז החדר (כשכל שש החידות נפתרו) */
+  showFinalHotspot?: boolean;
+  onOpenFinal?: () => void;
 }
 
 /** הגדלת הפתיחה — החדר רחב מאזור התצוגה כבר בכניסה, כך שתמיד יש מה לגרור */
@@ -25,6 +28,8 @@ const ZOOM_STEP = 0.25;
 export function ControlRoomViewer({
   solvedStations,
   onOpenStation,
+  showFinalHotspot = false,
+  onOpenFinal,
 }: ControlRoomViewerProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const [viewport, setViewport] = useState({ width: 0, height: 0 });
@@ -153,6 +158,21 @@ export function ControlRoomViewer({
             </button>
           );
         })}
+
+        {/* מוקד ההרכבה הסופית — זוהר במרכז החדר, נגיש בלחיצה ובמקלדת */}
+        {showFinalHotspot && (
+          <button
+            type="button"
+            className="hotspot active final-hotspot"
+            style={{ left: '50%', top: '63%' }}
+            onClick={() => onOpenFinal?.()}
+            aria-label="הרכבה סופית — פתיחת חידת הסיום"
+          >
+            <span className="hotspot-ring" aria-hidden="true" />
+            <span className="hotspot-icon" aria-hidden="true">🛰️</span>
+            <span className="hotspot-label">הרכבה סופית</span>
+          </button>
+        )}
       </div>
 
       <div className="zoom-controls">

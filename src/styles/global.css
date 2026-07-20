@@ -2203,6 +2203,557 @@ input {
   line-height: 1.7;
 }
 
+/* ==== חידת הסיום: הרכבה סופית ==== */
+.hotspot.final-hotspot .hotspot-icon {
+  border-color: var(--amber);
+  animation: glowPulse 1.6s infinite, finalGold 3s ease-in-out infinite;
+}
+
+.hotspot.final-hotspot .hotspot-ring {
+  border: 2px solid var(--amber);
+  animation: hotspotPing 1.6s ease-out infinite;
+}
+
+.hotspot.final-hotspot .hotspot-label {
+  border-color: var(--amber);
+  color: var(--amber);
+  font-size: 0.92rem;
+}
+
+@keyframes finalGold {
+  0%, 100% { box-shadow: 0 0 10px rgba(240, 168, 66, 0.5); }
+  50% { box-shadow: 0 0 24px rgba(240, 168, 66, 0.9); }
+}
+
+.final-banner {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 8;
+  background: rgba(6, 13, 26, 0.88);
+  border: 1px solid var(--amber);
+  color: var(--amber);
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 9px 22px;
+  white-space: nowrap;
+  animation: popIn 0.5s ease both, floatHint 3s ease-in-out infinite;
+  backdrop-filter: blur(4px);
+}
+
+/* --- שלב 1: סקירת הממצאים --- */
+.step-review {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.discovery-row {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  width: 100%;
+  max-width: 1150px;
+}
+
+.discovery-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.discovery-card {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--graphite);
+  border: 1px solid var(--graphite-light);
+  border-radius: 10px;
+  padding: 14px 8px 10px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  text-align: center;
+  height: 100%;
+}
+
+.discovery-num {
+  position: absolute;
+  top: 6px;
+  inset-inline-start: 8px;
+  color: var(--teal);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.discovery-text {
+  color: var(--text-dim);
+  font-size: 0.78rem;
+}
+
+.discovery-arrow {
+  color: var(--amber);
+  font-size: 1.2rem;
+  flex: 0 0 auto;
+}
+
+/* --- שלב 2: שרשרת הפיתוח --- */
+.step-chain {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.chain-row {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  width: 100%;
+  max-width: 1150px;
+}
+
+.chain-slot {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.chain-card {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--graphite);
+  border: 2px solid var(--graphite-light);
+  border-radius: 10px;
+  padding: 12px 8px 8px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-align: center;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition: border-color 0.35s, box-shadow 0.35s, transform 0.15s;
+  height: 100%;
+}
+
+.chain-card:hover {
+  transform: translateY(-2px);
+}
+
+.chain-card.selected {
+  border-color: var(--amber);
+  box-shadow: 0 0 12px rgba(240, 168, 66, 0.4);
+}
+
+.chain-card.dragging {
+  opacity: 0.45;
+}
+
+.chain-text {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
+.chain-moves {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.chain-move {
+  background: var(--bg-deep);
+  border: 1px solid var(--graphite-light);
+  color: var(--teal);
+  border-radius: 6px;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+}
+
+.chain-move:disabled {
+  opacity: 0.3;
+}
+
+.chain-link {
+  flex: 0 0 14px;
+  height: 3px;
+  background: var(--graphite-light);
+  border-radius: 2px;
+  transition: background 0.4s, box-shadow 0.4s;
+}
+
+/* השרשרת נפתרה: קו אור טורקיז והארת חוליות ברצף */
+.chain-row.solved .chain-card {
+  border-color: var(--teal);
+  box-shadow: 0 0 16px rgba(45, 212, 200, 0.55);
+  cursor: default;
+}
+
+.chain-row.solved .chain-link {
+  background: var(--teal);
+  box-shadow: 0 0 10px rgba(45, 212, 200, 0.8);
+}
+
+.chain-status {
+  width: 100%;
+  max-width: 900px;
+}
+
+.chain-status .status-hint {
+  flex-wrap: wrap;
+}
+
+.chain-ghost {
+  background: var(--graphite);
+  border: 2px solid var(--teal);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+/* --- שלב 3: לוח המערכות --- */
+.step-systems {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.systems-board {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(760px, 100%);
+}
+
+.system-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--graphite);
+  border: 1px solid var(--danger);
+  border-radius: 10px;
+  padding: 9px 14px;
+  transition: border-color 0.35s, box-shadow 0.35s;
+}
+
+.system-row.ok {
+  border-color: #3fae7a;
+  box-shadow: 0 0 12px rgba(63, 174, 122, 0.3);
+  animation: systemOn 0.5s ease;
+}
+
+@keyframes systemOn {
+  0% { transform: scale(0.98); filter: brightness(1.5); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+.system-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.system-fact {
+  color: var(--text-dim);
+  font-size: 0.86rem;
+}
+
+.system-status {
+  color: var(--danger);
+  font-weight: 700;
+  font-size: 0.9rem;
+  min-width: 44px;
+  text-align: center;
+}
+
+.system-status.ok {
+  color: #3fae7a;
+}
+
+.verify-button {
+  min-width: 76px;
+}
+
+.verify-button.done {
+  border-color: #3fae7a;
+  color: #3fae7a;
+}
+
+.relaunch-button {
+  font-size: 1.15rem;
+  padding: 14px 34px;
+}
+
+.relaunch-button:disabled {
+  filter: grayscale(0.7) brightness(0.6);
+  cursor: not-allowed;
+}
+
+/* --- שלב 4: רצף ההפעלה --- */
+.step-launch {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.launch-svg {
+  width: min(860px, 100%);
+  height: auto;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.launch-bg {
+  fill: #04070f;
+  transition: fill 1.4s ease;
+}
+
+.launch-bg.on {
+  fill: #0b1830;
+}
+
+.launch-earth {
+  opacity: 0.9;
+}
+
+.launch-orbit {
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 8px rgba(45, 212, 200, 0.8));
+  stroke-dasharray: 1700;
+  stroke-dashoffset: 1700;
+  opacity: 0;
+}
+
+.launch-orbit.on {
+  opacity: 1;
+  animation: orbitSweep 1.4s ease forwards;
+}
+
+@keyframes orbitSweep {
+  to { stroke-dashoffset: 0; }
+}
+
+.power-line {
+  fill: none;
+  stroke: #3fae7a;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 10 10;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+
+.power-line.on {
+  opacity: 1;
+  filter: drop-shadow(0 0 5px rgba(63, 174, 122, 0.8));
+  animation: radioTravel 0.8s linear infinite;
+}
+
+.launch-station rect {
+  fill: var(--graphite);
+  stroke: var(--graphite-light);
+  stroke-width: 1.5;
+}
+
+.launch-station path {
+  fill: rgba(45, 212, 200, 0.25);
+  stroke: var(--teal);
+  stroke-width: 2;
+}
+
+.beam {
+  fill: rgba(240, 168, 66, 0.35);
+  stroke: var(--amber);
+  stroke-width: 1;
+  opacity: 0;
+  transition: opacity 0.7s;
+}
+
+.beam.on {
+  opacity: 1;
+  filter: drop-shadow(0 0 10px rgba(240, 168, 66, 0.7));
+  animation: batteryPulse 1s ease-in-out infinite;
+}
+
+.sat-body {
+  fill: var(--graphite-light);
+  stroke: var(--text-main);
+  stroke-width: 2;
+}
+
+.launch-panel rect {
+  fill: rgba(45, 212, 200, 0.3);
+  stroke: var(--teal);
+  stroke-width: 2;
+}
+
+.launch-panel {
+  transform: scaleX(0.06);
+  transition: transform 1s ease;
+}
+
+.launch-panel.open {
+  transform: scaleX(1);
+}
+
+.cam-lens {
+  fill: #101820;
+  stroke: var(--graphite-light);
+  stroke-width: 2;
+  transition: fill 0.5s, stroke 0.5s;
+}
+
+.cam-lens.on {
+  fill: var(--amber);
+  stroke: var(--amber);
+  filter: drop-shadow(0 0 8px rgba(240, 168, 66, 0.9));
+}
+
+.sat-dish path {
+  fill: rgba(45, 212, 200, 0.25);
+  stroke: var(--teal);
+  stroke-width: 2;
+}
+
+.sat-dish line {
+  stroke: var(--teal);
+  stroke-width: 2;
+}
+
+.sat-dish {
+  transform: rotate(30deg);
+  transition: transform 1s ease;
+}
+
+.sat-dish.aimed {
+  transform: rotate(-28deg);
+}
+
+.launch-caption {
+  color: var(--teal);
+  font-weight: 700;
+  font-size: 1.05rem;
+  min-height: 1.6em;
+}
+
+/* --- מסך ההצלחה --- */
+.step-final-success {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.final-title {
+  font-size: 1.8rem;
+  color: var(--teal);
+  text-shadow: 0 0 22px rgba(45, 212, 200, 0.5);
+  animation: popIn 0.5s ease both;
+}
+
+.final-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.final-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--graphite);
+  border: 1px solid var(--graphite-light);
+  border-radius: 10px;
+  padding: 10px 22px;
+  min-width: 130px;
+}
+
+.final-stat-label {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.final-stat strong {
+  color: var(--teal);
+  font-variant-numeric: tabular-nums;
+}
+
+.final-chain {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 1000px;
+}
+
+.final-chain-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.final-chip {
+  background: rgba(45, 212, 200, 0.08);
+  border: 1px solid var(--teal);
+  color: var(--text-main);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.final-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* prefers-reduced-motion: גרסה מקוצרת ושקטה של האנימציות */
+@media (prefers-reduced-motion: reduce) {
+  .launch-panel,
+  .sat-dish,
+  .launch-bg,
+  .power-line,
+  .beam {
+    transition-duration: 0.1s;
+  }
+
+  .launch-orbit.on {
+    animation-duration: 0.2s;
+  }
+
+  .hotspot.final-hotspot .hotspot-icon,
+  .hotspot.final-hotspot .hotspot-ring,
+  .final-banner {
+    animation: none;
+  }
+
+  .chain-row.solved .chain-card {
+    transition-delay: 0s !important;
+  }
+}
+
 /* ==== רספונסיביות ==== */
 @media (max-width: 900px) {
   .top-bar {
@@ -2276,5 +2827,16 @@ input {
 
   .evidence-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .discovery-text,
+  .chain-text {
+    display: none;
+  }
+
+  .final-banner {
+    white-space: normal;
+    text-align: center;
+    max-width: 90%;
   }
 }
