@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { PuzzleProps } from '../types/game';
 import {
@@ -20,11 +20,17 @@ import {
   TRANSITION_MESSAGE,
 } from '../data/lastPhotoPuzzle';
 import { PixelatedPhoto } from './PixelatedPhoto';
-import { CinematicStationShell } from '../components/CinematicStationShell';
+import {
+  CinematicStationShell,
+  CineStageSizeContext,
+} from '../components/CinematicStationShell';
 import {
   CONSOLE_ASPECT,
   CONSOLE_REGIONS,
+  SCREEN_QUAD,
+  quadBounds,
   regionStyle,
+  screenQuadStyle,
 } from './cinematic/consoleLayout';
 import { soundManager } from '../effects/soundManager';
 
@@ -40,6 +46,17 @@ const CONSOLE_IMAGE = `${import.meta.env.BASE_URL}assets/cinematic/station-01-la
 if (typeof window !== 'undefined') {
   const preload = new Image();
   preload.src = CONSOLE_IMAGE;
+}
+
+/** המסך הפיזי: ממופה אל המרובע הפרספקטיבי של זכוכית התצלום ב-matrix3d */
+function ConsoleScreen({ children }: { children: ReactNode }) {
+  const { width, height } = useContext(CineStageSizeContext);
+  const style = useMemo(() => screenQuadStyle(width, height), [width, height]);
+  return (
+    <div className="cine-screen" style={style}>
+      {children}
+    </div>
+  );
 }
 
 /** חוגה פיזית: role=slider עם חיצים במקלדת; לחיצה מסובבת לערך הבא */
@@ -364,7 +381,7 @@ export function LastPhotoPuzzle({
       aspect={CONSOLE_ASPECT}
       safe={CONSOLE_REGIONS.safe}
       ariaTitle="מסוף הדמיה · התצלום האחרון"
-      debugRegions={CONSOLE_REGIONS}
+      debugRegions={{ screen: quadBounds(SCREEN_QUAD), ...CONSOLE_REGIONS }}
       topStrip={
         <>
           <span className="cine-strip-title">
@@ -411,7 +428,7 @@ export function LastPhotoPuzzle({
       }
     >
       {/* המסך הפיזי — התוכן הדינמי מחליף את תוכן המסך המצולם */}
-      <div className="cine-screen" style={regionStyle(CONSOLE_REGIONS.screen)}>
+      <ConsoleScreen>
         {step === 1 ? (
           <div className="cine-screen-boot">
             <div className="static-noise" aria-hidden="true" />
@@ -427,7 +444,7 @@ export function LastPhotoPuzzle({
           <span className="cine-finding-badge">ממצא 1</span>
         )}
         <div className="cine-screen-glass" aria-hidden="true" />
-      </div>
+      </ConsoleScreen>
 
       {/* נורות מצב השלבים בדופן השמאלית */}
       <div
@@ -544,20 +561,22 @@ export function LastPhotoPuzzle({
         </div>
       )}
 
-      {/* מגירת המידע/הרמזים הצרה שבצד הקונסולה */}
-      <div className={`cine-side-drawer${drawerOpen ? ' open' : ''}`} aria-hidden={!drawerOpen}>
-        <div className="cine-side-drawer-head">
-          <span>{drawerTitle}</span>
-          <button
-            type="button"
-            className="cine-side-drawer-close"
-            onClick={() => setDrawerOpen(false)}
-            tabIndex={drawerOpen ? 0 : -1}
-          >
-            ✕
-          </button>
+      {/* מגירת המידע/הרמזים הצרה — נשלפת מתוך הדופן הימנית של הקונסולה */}
+      <div className="cine-side-drawer-clip" aria-hidden={!drawerOpen}>
+        <div className={`cine-side-drawer${drawerOpen ? ' open' : ''}`}>
+          <div className="cine-side-drawer-head">
+            <span>{drawerTitle}</span>
+            <button
+              type="button"
+              className="cine-side-drawer-close"
+              onClick={() => setDrawerOpen(false)}
+              tabIndex={drawerOpen ? 0 : -1}
+            >
+              ✕
+            </button>
+          </div>
+          {drawerBody}
         </div>
-        {drawerBody}
       </div>
     </CinematicStationShell>
   );

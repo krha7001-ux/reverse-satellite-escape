@@ -1,6 +1,19 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import type { ReactNode } from 'react';
 import type { ConsoleRegion } from '../puzzles/cinematic/consoleLayout';
+
+/** גודל הבמה בפיקסלים — לשכבות שזקוקות לחישובי פרספקטיבה (matrix3d) */
+export const CineStageSizeContext = createContext<{ width: number; height: number }>({
+  width: 0,
+  height: 0,
+});
 
 /**
  * מעטפת קולנועית לחידות: תמונת מכשיר פוטוריאליסטית ביחס 16:9,
@@ -179,7 +192,11 @@ export function CinematicStationShell({
                 className="cine-content"
                 style={showContent ? undefined : { visibility: 'hidden' }}
               >
-                {children}
+                <CineStageSizeContext.Provider
+                  value={{ width: stage.width, height: stage.height }}
+                >
+                  {children}
+                </CineStageSizeContext.Provider>
               </div>
               {showLighting && (
                 <div className="cine-lighting" aria-hidden="true">

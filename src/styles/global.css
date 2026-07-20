@@ -4744,7 +4744,7 @@ input {
 
 .cine-lamp i {
   font-style: normal;
-  font-size: 0.62em;
+  font-size: 0.48em;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.28);
 }
@@ -4794,26 +4794,26 @@ input {
 }
 
 .cine-lcd-label {
-  font-size: 0.62em;
+  font-size: 0.5em;
   color: rgba(240, 168, 66, 0.75);
   white-space: nowrap;
 }
 
 .cine-lcd-value {
-  font-size: 0.95em;
+  font-size: 0.68em;
   font-weight: 700;
   text-shadow: 0 0 10px rgba(240, 168, 66, 0.6);
   white-space: nowrap;
 }
 
 .cine-lcd-waiting {
-  font-size: 0.6em;
+  font-size: 0.48em;
   line-height: 1.35;
   color: rgba(240, 168, 66, 0.8);
 }
 
 .cine-lcd-code {
-  font-size: 1.05em;
+  font-size: 0.82em;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-shadow: 0 0 12px rgba(240, 168, 66, 0.7);
@@ -4828,10 +4828,7 @@ input {
   text-shadow: 0 0 12px rgba(45, 212, 200, 0.75);
 }
 
-/* ה-LCD בקוד קצר משתמש בגופן גדול; placeholder טקסטואלי קטן יותר */
-.cine-lcd .cine-lcd-code:not(.ok):not(:empty) {
-  font-size: 1.05em;
-}
+
 
 /* --- המקלדת הפיזית --- */
 .cine-keypad.keypad {
@@ -4839,21 +4836,27 @@ input {
   grid-template-columns: repeat(3, 1fr);
   grid-auto-rows: 1fr;
   /* em — נמדד לפי גודל הבמה; אחוזים כאן היו נמדדים לפי רוחב הבמה כולה */
-  gap: 0.8em 0.72em;
-  padding: 0.72em;
+  gap: 0.28em 0.26em;
+  padding: 0.34em;
+  background: linear-gradient(180deg, #14171d, #0d0f14);
+  border-radius: 0.28em;
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.85),
+    0 1px 0 rgba(200, 220, 240, 0.08);
 }
 
 .cine-key.keypad-key {
   padding: 0;
-  font-size: 0.95em;
+  min-width: 0;
+  font-size: 0.62em;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.38);
   background: linear-gradient(180deg, #2c313a, #1a1e25 60%, #14171d);
   border: 1px solid #0b0d11;
-  border-radius: 0.3em;
+  border-radius: 0.18em;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 0.18em 0.3em rgba(0, 0, 0, 0.65);
+    0 0.12em 0.22em rgba(0, 0, 0, 0.65);
   transition: transform 0.08s, box-shadow 0.08s, color 0.2s;
 }
 
@@ -4883,7 +4886,7 @@ input {
 }
 
 .cine-key.keypad-key.action {
-  font-size: 0.72em;
+  font-size: 0.5em;
   color: rgba(255, 255, 255, 0.32);
 }
 
@@ -4964,7 +4967,7 @@ input {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.78em;
+  font-size: 0.6em;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--teal);
@@ -5048,13 +5051,20 @@ input {
 }
 
 /* --- מגירת המידע/הרמזים הצרה שבצד הקונסולה --- */
-.cine-side-drawer {
+.cine-side-drawer-clip {
   position: absolute;
-  top: 31.5%;
-  right: 0;
-  width: min(19em, 38%);
-  max-height: 42%;
+  top: 18.5%;
+  right: 10.6%;
+  width: min(19em, 34%);
+  max-height: 44%;
+  overflow: hidden;
   z-index: 6;
+  pointer-events: none;
+}
+
+.cine-side-drawer {
+  pointer-events: auto;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.5em;
