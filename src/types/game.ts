@@ -63,6 +63,8 @@ export interface GameState {
   muted: boolean;
   /** חידת הסיום: הושלמה + נתוני סיום */
   finalAssembly: FinalAssemblyState;
+  /** תחנות שאנימציית ההצלחה שלהן כבר הושמעה (לא חוזרת ברענון) */
+  effectsPlayed: Partial<Record<StationId, boolean>>;
 }
 
 export type GameAction =
@@ -74,6 +76,7 @@ export type GameAction =
   | { type: 'ADD_FINDING'; finding: FindingCard }
   | { type: 'TOGGLE_MUTE' }
   | { type: 'COMPLETE_FINAL_ASSEMBLY'; remainingSeconds: number }
+  | { type: 'MARK_EFFECT_PLAYED'; stationId: StationId }
   | { type: 'RESET' };
 
 /** Props אחידים שכל רכיב חידה עתידי יקבל */

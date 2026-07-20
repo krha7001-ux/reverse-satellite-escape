@@ -8,6 +8,11 @@ import {
   LEDS_PER_ANCHOR,
 } from '../effects/roomEffectsConfig';
 import type { EffectAnchor } from '../effects/roomEffectsConfig';
+import {
+  SatelliteProgressEffect,
+  STATION_EFFECTS,
+} from './StationEffects';
+import type { StationPhase } from './StationEffects';
 
 /** מצב חזותי של עוגן תחנה */
 type VisualState = 'locked' | 'available' | 'active' | 'solved' | 'completed';
@@ -18,6 +23,14 @@ interface RoomEffectsLayerProps {
   openStationId: StationId | null;
   /** חידת הסיום הושלמה — החדר ער במלואו */
   finalCompleted: boolean;
+  /** תחנה באנימציית כניסה (לפני פתיחת החידה) */
+  pendingStation?: StationId | null;
+  /** תחנה באנימציית הצלחה חד-פעמית (בחזרה לחדר) */
+  successStation?: StationId | null;
+  /** לחיצה על תחנה נעולה: פעימת אור אדומה קצרה */
+  lockedPulse?: { stationId: StationId; seq: number } | null;
+  /** דריסות מצב לצורכי כיול (?effectsDebug=1 בלבד) */
+  debugOverrides?: Partial<Record<StationId, StationPhase>>;
 }
 
 /** ערך קודם של prop — לזיהוי מעברים (פתרון, חזרה לחדר) */
@@ -46,6 +59,10 @@ export function RoomEffectsLayer({
   solvedStations,
   openStationId,
   finalCompleted,
+  pendingStation = null,
+  successStation = null,
+  lockedPulse = null,
+  debugOverrides = {},
 }: RoomEffectsLayerProps) {
   // מצב בדיקה לכיול: ?effectsDebug=1
   const debug = useMemo(
@@ -123,6 +140,19 @@ export function RoomEffectsLayer({
     return 'locked';
   };
 
+  /** שלב האפקט הפיזי של התחנה (כולל כניסה/הצלחה/דריסת כיול) */
+  const stationPhase = (stationId: StationId): StationPhase => {
+    const override = debugOverrides[stationId];
+    if (override) return override;
+    if (pendingStation === stationId) return 'entry';
+    if (successStation === stationId) return 'success';
+    if (openStationId === stationId) return 'active';
+    const status = getStationStatus(stationId, solvedStations);
+    if (status === 'solved') return 'completed';
+    if (status === 'active') return 'available';
+    return 'locked';
+  };
+
   // התעוררות החדר: תאורה עדינה שגוברת עם ההתקדמות
   const wakeLevel = finalCompleted ? 7 : solvedStations.length;
 
@@ -153,6 +183,10 @@ export function RoomEffectsLayer({
 
       {EFFECT_ANCHORS.map((anchor) => {
         const state = anchor.stationId ? stationState(anchor.stationId) : null;
+        const phase = anchor.stationId ? stationPhase(anchor.stationId) : null;
+        const StationFx = anchor.stationId
+          ? STATION_EFFECTS[anchor.stationId]
+          : null;
         return (
           <div
             key={anchor.id}
@@ -192,8 +226,26 @@ export function RoomEffectsLayer({
             {/* ארון: זוהר פנימי עדין */}
             {anchor.effect === 'cabinet' && <div className="fx-cabinet-glow" />}
 
-            {/* הלוויין: נצנוץ החזר אור איטי */}
-            {anchor.effect === 'satellite' && <div className="fx-sat-glint" />}
+            {/* הלוויין: נצנוץ החזר אור + מערכות שנדלקות עם ההתקדמות */}
+            {anchor.effect === 'satellite' && (
+              <>
+                <div className="fx-sat-glint" />
+                <SatelliteProgressEffect
+                  level={solvedStations.length}
+                  finalCompleted={finalCompleted}
+                />
+              </>
+            )}
+
+            {/* האפקט הפיזי של התחנה (2.5D) */}
+            {StationFx && phase && <StationFx phase={phase} />}
+
+            {/* לחיצה על תחנה נעולה: פעימת אור אדומה */}
+            {lockedPulse !== null &&
+              anchor.stationId !== undefined &&
+              lockedPulse.stationId === anchor.stationId && (
+                <div key={`lock-${lockedPulse.seq}`} className="fx-locked-pulse" />
+              )}
 
             {/* תקרה: חלקיקי אבק באור */}
             {anchor.effect === 'ceiling' &&

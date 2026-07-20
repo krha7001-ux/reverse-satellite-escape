@@ -2518,6 +2518,1035 @@ input {
   100% { stroke-dashoffset: 0; opacity: 0; }
 }
 
+/* ==== אפקטים פיזיים 2.5D לתחנות ==== */
+.stfx {
+  position: absolute;
+  inset: 0;
+}
+
+.stfx * {
+  pointer-events: none;
+}
+
+/* פעימת נעילה אדומה */
+.fx-locked-pulse {
+  position: absolute;
+  inset: -4%;
+  border-radius: 12px;
+  border: 2px solid rgba(224, 86, 86, 0.8);
+  background: radial-gradient(ellipse at 50% 50%, rgba(224, 86, 86, 0.14), transparent 70%);
+  animation: lockedShake 0.55s ease-out forwards;
+}
+
+@keyframes lockedShake {
+  0% { opacity: 1; transform: translateX(0); }
+  25% { transform: translateX(-1.5%); }
+  50% { transform: translateX(1.5%); }
+  75% { transform: translateX(-0.8%); }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
+/* --- תחנה 1: מסך + מגירה --- */
+.stfx-photo .pfx-screen {
+  position: absolute;
+  inset: 4% 6% 30% 6%;
+  border-radius: 6px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.stfx-photo.phase-entry .pfx-screen { opacity: 1; }
+
+.pfx-glitch {
+  position: absolute;
+  inset-inline: 0;
+  height: 9%;
+  background: rgba(120, 220, 255, 0.25);
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.phase-entry .pfx-glitch.g-a { top: 22%; animation: glitchJump 1.1s steps(5) 1; }
+.phase-entry .pfx-glitch.g-b { top: 62%; background: rgba(255, 120, 160, 0.18); animation: glitchJump 1.1s steps(4) 0.15s 1; }
+
+@keyframes glitchJump {
+  0% { opacity: 0.9; transform: translateX(-6%); }
+  30% { opacity: 0.2; transform: translateX(5%); }
+  60% { opacity: 0.8; transform: translateX(-3%); }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
+.pfx-scanbar {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 12%;
+  background: linear-gradient(180deg, transparent, rgba(45, 212, 200, 0.4), transparent);
+  opacity: 0;
+}
+
+.phase-entry .pfx-scanbar { animation: scanPass 1.2s ease-in-out 1; }
+
+@keyframes scanPass {
+  0% { opacity: 0; transform: translateY(0); }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(700%); }
+}
+
+.pfx-pixels {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.pfx-pixel {
+  background: rgba(140, 220, 255, 0.16);
+  opacity: 0;
+}
+
+.phase-entry .pfx-pixel { animation: pixelSharpen 1.15s ease 1; }
+.phase-entry .px-1, .phase-entry .px-5 { animation-delay: 0.12s; }
+.phase-entry .px-2, .phase-entry .px-7 { animation-delay: 0.24s; }
+.phase-entry .px-4, .phase-entry .px-8 { animation-delay: 0.3s; }
+
+@keyframes pixelSharpen {
+  0% { opacity: 0.85; transform: scale(1); }
+  55% { opacity: 0.35; transform: scale(0.6); }
+  100% { opacity: 0; transform: scale(0.15); }
+}
+
+/* המגירה בעמדה שמתחת למסך */
+.pfx-console-zone {
+  position: absolute;
+  inset-inline: 18%;
+  top: 84%;
+  height: 34%;
+  perspective: 300px;
+}
+
+.pfx-drawer {
+  position: absolute;
+  inset-inline: 8%;
+  top: 12%;
+  height: 56%;
+  transform: translateY(-84%);
+  opacity: 0;
+  transition: transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.1), opacity 0.3s;
+}
+
+.phase-success .pfx-drawer,
+.phase-completed .pfx-drawer {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.phase-completed .pfx-drawer { transform: translateY(-45%); transition: none; }
+
+.pfx-drawer-cavity {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #04070d 20%, #0d1a2b);
+  border: 1px solid #2c3a4c;
+  border-radius: 3px;
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.8), 0 6px 10px rgba(0, 0, 0, 0.55);
+}
+
+.pfx-drawer-front {
+  position: absolute;
+  inset-inline: -2%;
+  bottom: -18%;
+  height: 24%;
+  background: linear-gradient(180deg, #33404f, #222c38);
+  border-radius: 2px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+.pfx-chip {
+  position: absolute;
+  inset-inline: 22%;
+  top: 16%;
+  height: 56%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #0f2f2d, #123c38);
+  border: 1px solid var(--teal);
+  border-radius: 3px;
+  color: var(--teal);
+  font-size: clamp(6px, 0.55vw, 10px);
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(45, 212, 200, 0.55);
+  opacity: 0;
+  transform: translateY(60%);
+  transition: transform 0.6s ease 0.5s, opacity 0.4s ease 0.5s;
+}
+
+.phase-success .pfx-chip,
+.phase-completed .pfx-chip {
+  opacity: 1;
+  transform: translateY(-26%);
+}
+
+.phase-completed .pfx-chip { transition: none; transform: translateY(0); }
+
+.pfx-done-led {
+  position: absolute;
+  top: 4%;
+  inset-inline-end: 4%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #3fae7a;
+  box-shadow: 0 0 6px rgba(63, 174, 122, 0.9);
+  opacity: 0;
+}
+
+.phase-completed .pfx-done-led { opacity: 1; animation: ledBreath 4s ease-in-out infinite; }
+
+/* --- תחנה 2: ארון זכוכית --- */
+.stfx-camera .cfx-doors {
+  position: absolute;
+  inset: 6% 4% 22% 4%;
+  perspective: 420px;
+  display: flex;
+}
+
+.cfx-door {
+  flex: 1;
+  background: linear-gradient(115deg, rgba(180, 220, 235, 0.14), rgba(180, 220, 235, 0.03) 55%, rgba(255, 255, 255, 0.1));
+  border: 1.5px solid rgba(150, 180, 200, 0.55);
+  box-shadow: inset 0 0 12px rgba(200, 235, 255, 0.12);
+  opacity: 0;
+  transition: transform 0.9s ease, opacity 0.3s;
+}
+
+.cfx-door.door-right { transform-origin: right center; border-radius: 4px 0 0 4px; }
+.cfx-door.door-left { transform-origin: left center; border-radius: 0 4px 4px 0; }
+
+.phase-entry .cfx-door,
+.phase-active .cfx-door { opacity: 1; }
+.phase-entry .cfx-door.door-right,
+.phase-active .cfx-door.door-right { transform: rotateY(62deg); }
+.phase-entry .cfx-door.door-left,
+.phase-active .cfx-door.door-left { transform: rotateY(-62deg); }
+
+.cfx-tray {
+  position: absolute;
+  inset-inline: 12%;
+  bottom: 14%;
+  height: 10%;
+  background: linear-gradient(180deg, #3a4552, #262f3a);
+  border-radius: 2px;
+  box-shadow: 0 4px 7px rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transition: transform 0.7s ease 0.35s, opacity 0.3s 0.35s;
+}
+
+.phase-entry .cfx-tray,
+.phase-active .cfx-tray,
+.phase-success .cfx-tray { opacity: 1; transform: translateY(34%) scale(1.06); }
+
+.cfx-lens {
+  position: absolute;
+  top: -78%;
+  inset-inline-start: 44%;
+  width: 16%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, #7fd8e8 8%, #14424c 45%, #06181e 80%);
+  border: 1.5px solid #77c9d8;
+  box-shadow: 0 0 8px rgba(45, 212, 200, 0.6);
+  transition: transform 1s ease;
+}
+
+.phase-entry .cfx-lens { box-shadow: 0 0 14px rgba(45, 212, 200, 0.95); }
+.phase-success .cfx-lens { transform: translateY(-190%) scale(1.25); }
+.phase-completed .cfx-lens { opacity: 0; }
+
+.cfx-lens-ring {
+  position: absolute;
+  inset: -42%;
+  border-radius: 50%;
+  border: 1.5px solid rgba(45, 212, 200, 0.8);
+  opacity: 0;
+}
+
+.phase-entry .cfx-lens-ring { opacity: 1; animation: hotspotPing 1.1s ease-out infinite; }
+
+.cfx-focus-ring {
+  position: absolute;
+  top: -320%;
+  inset-inline-start: 38%;
+  width: 28%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px dashed rgba(45, 212, 200, 0.85);
+  opacity: 0;
+}
+
+.phase-success .cfx-focus-ring { opacity: 1; animation: spinRing 1.6s linear infinite; }
+
+@keyframes spinRing { to { transform: rotate(360deg); } }
+
+.cfx-ray {
+  position: absolute;
+  top: -260%;
+  inset-inline-start: 50%;
+  width: 34%;
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(240, 168, 66, 0.85), transparent);
+  transform-origin: 0 50%;
+  opacity: 0;
+}
+
+.phase-success .cfx-ray { opacity: 1; animation: rayIn 1.4s ease infinite; }
+.phase-success .ray-0 { transform: rotate(20deg); }
+.phase-success .ray-1 { transform: rotate(160deg); }
+.phase-success .ray-2 { transform: rotate(-20deg); }
+.phase-success .ray-3 { transform: rotate(200deg); }
+
+@keyframes rayIn {
+  0% { opacity: 0; }
+  40% { opacity: 0.9; }
+  100% { opacity: 0.2; }
+}
+
+.cfx-interior-glow {
+  position: absolute;
+  inset: 8% 10% 20% 10%;
+  border-radius: 6px;
+  background: radial-gradient(ellipse at 50% 45%, rgba(94, 214, 195, 0.16), transparent 72%);
+  opacity: 0;
+  transition: opacity 0.8s;
+  mix-blend-mode: screen;
+}
+
+.phase-completed .cfx-interior-glow { opacity: 1; }
+
+.cfx-ready-tag {
+  position: absolute;
+  bottom: 4%;
+  inset-inline-start: 50%;
+  transform: translateX(50%);
+  color: #6fd8a5;
+  font-size: clamp(6px, 0.55vw, 10px);
+  font-weight: 700;
+  background: rgba(6, 13, 26, 0.75);
+  border: 1px solid #3fae7a;
+  border-radius: 999px;
+  padding: 1px 7px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.8s ease 0.3s;
+}
+
+.phase-completed .cfx-ready-tag { opacity: 1; }
+
+/* --- תחנה 3: מסך גלים וצלחת --- */
+.dfx-screen-wipe {
+  position: absolute;
+  inset: 6% 8% 40% 8%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(120, 200, 255, 0.2), rgba(45, 212, 200, 0.12));
+  clip-path: inset(0 0 0 100%);
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+.phase-entry .dfx-screen-wipe {
+  opacity: 1;
+  animation: screenWipe 1.1s ease forwards;
+}
+
+@keyframes screenWipe {
+  from { clip-path: inset(0 0 0 100%); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+/* הצלחת בתמונה נמצאת בחלק הימני-תחתון של האנכור (מיקום פיזי) */
+.dfx-arcs {
+  position: absolute;
+  left: 46%;
+  bottom: 14%;
+  width: 30%;
+  aspect-ratio: 1;
+}
+
+.dfx-arc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  border-top-color: rgba(45, 212, 200, 0.8);
+  opacity: 0;
+  transform: rotate(-38deg) scale(0.3);
+}
+
+.phase-entry .dfx-arc,
+.phase-completed .dfx-arc { animation: arcOut 2s ease-out infinite; }
+.phase-entry .arc-1, .phase-completed .arc-1 { animation-delay: 0.4s; }
+.phase-entry .arc-2 { animation-delay: 0.8s; }
+.phase-completed .arc-1 { animation-duration: 4.5s; }
+.phase-completed .arc-0 { animation-duration: 4.5s; }
+.phase-completed .arc-2 { display: none; }
+
+@keyframes arcOut {
+  0% { opacity: 0.9; transform: rotate(-38deg) scale(0.3); }
+  100% { opacity: 0; transform: rotate(-38deg) scale(1.15); }
+}
+
+.dfx-packet {
+  position: absolute;
+  top: 26%;
+  left: 26%;
+  width: 7%;
+  height: 5%;
+  border-radius: 2px;
+  background: var(--amber);
+  box-shadow: 0 0 7px rgba(240, 168, 66, 0.9);
+  opacity: 0;
+}
+
+.phase-success .dfx-packet { animation: packetToDish 1.2s ease-in forwards; }
+.phase-success .pk-1 { animation-delay: 0.3s; }
+.phase-success .pk-2 { animation-delay: 0.6s; }
+
+@keyframes packetToDish {
+  0% { opacity: 0; transform: translate(0, 0) scale(1); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate(380%, 640%) scale(0.5); }
+}
+
+.dfx-uplink {
+  position: absolute;
+  left: 52%;
+  bottom: 28%;
+  width: 14%;
+  aspect-ratio: 1;
+}
+
+.dfx-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(45, 212, 200, 0.9);
+  opacity: 0;
+}
+
+.phase-success .dfx-ring { animation: ringUp 1.4s ease-out 2; }
+.phase-success .r-1 { animation-delay: 0.5s; }
+
+@keyframes ringUp {
+  0% { opacity: 0.9; transform: translateY(0) scale(0.4); }
+  100% { opacity: 0; transform: translateY(-260%) scale(1.6); }
+}
+
+.dfx-signal-led {
+  position: absolute;
+  top: 8%;
+  inset-inline-end: 6%;
+  font-size: clamp(5px, 0.45vw, 8px);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--danger);
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  padding: 0 4px;
+  background: rgba(6, 13, 26, 0.7);
+  opacity: 0;
+  transition: color 0.5s;
+}
+
+.phase-entry .dfx-signal-led,
+.phase-active .dfx-signal-led,
+.phase-success .dfx-signal-led,
+.phase-completed .dfx-signal-led { opacity: 1; }
+.phase-success .dfx-signal-led,
+.phase-completed .dfx-signal-led { color: #3fae7a; }
+
+/* --- תחנה 4: פאנל סולארי --- */
+.wfx-beam {
+  position: absolute;
+  top: -12%;
+  right: 2%;
+  width: 40%;
+  height: 68%;
+  background: linear-gradient(205deg, rgba(240, 168, 66, 0.28), transparent 70%);
+  clip-path: polygon(78% 0, 100% 0, 62% 100%, 22% 100%);
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+.phase-entry .wfx-beam { animation: beamIn 1.2s ease forwards; }
+.phase-success .wfx-beam, .phase-completed .wfx-beam { opacity: 0.45; }
+
+@keyframes beamIn {
+  0% { opacity: 0; }
+  40% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* שכבת הפאנל יושבת על הפאנל הסולארי שבתמונה (מיקום פיזי — לא תלוי RTL) */
+.wfx-panel {
+  position: absolute;
+  left: 54%;
+  top: 46%;
+  width: 58%;
+  height: 32%;
+  display: flex;
+  gap: 2px;
+  perspective: 300px;
+  transform: rotate(-16deg);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.phase-entry .wfx-panel,
+.phase-active .wfx-panel,
+.phase-success .wfx-panel,
+.phase-completed .wfx-panel { opacity: 1; }
+
+.wfx-half {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5px;
+  transition: transform 0.9s ease;
+}
+
+.phase-success .wfx-half.half-a { transform: rotateY(-24deg); transform-origin: right center; }
+.phase-success .wfx-half.half-b { transform: rotateY(24deg); transform-origin: left center; }
+
+.wfx-cell {
+  background: rgba(30, 60, 90, 0.5);
+  border: 1px solid rgba(90, 160, 210, 0.5);
+  border-radius: 1.5px;
+  transition: background 0.4s, box-shadow 0.4s;
+}
+
+.phase-entry .wfx-cell {
+  animation: cellLight 0.9s ease forwards;
+}
+
+.phase-entry .c-1, .phase-entry .c-5 { animation-delay: 0.15s; }
+.phase-entry .c-2, .phase-entry .c-6 { animation-delay: 0.3s; }
+.phase-entry .c-3, .phase-entry .c-7 { animation-delay: 0.45s; }
+
+@keyframes cellLight {
+  to { background: rgba(80, 170, 235, 0.55); box-shadow: 0 0 5px rgba(80, 170, 235, 0.8); }
+}
+
+.phase-success .wfx-cell,
+.phase-completed .wfx-cell {
+  background: rgba(80, 170, 235, 0.4);
+  box-shadow: 0 0 4px rgba(80, 170, 235, 0.6);
+}
+
+.wfx-flow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.phase-success .wfx-flow { opacity: 1; }
+
+.wfx-flow-line {
+  fill: none;
+  stroke: #3fae7a;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 5 5;
+  filter: drop-shadow(0 0 2px rgba(63, 174, 122, 0.9));
+  animation: radioTravel 0.7s linear infinite;
+}
+
+.wfx-meter {
+  position: absolute;
+  top: 8%;
+  left: 8%;
+  width: 32%;
+  height: 5%;
+  border: 1px solid var(--graphite-light);
+  border-radius: 999px;
+  background: rgba(6, 13, 26, 0.75);
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.phase-entry .wfx-meter,
+.phase-success .wfx-meter,
+.phase-completed .wfx-meter { opacity: 1; }
+
+.wfx-meter-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #2a7a55, #3fae7a);
+  border-radius: 999px;
+  transition: width 1.4s ease;
+}
+
+.phase-success .wfx-meter-fill { width: 100%; }
+.phase-completed .wfx-meter-fill { width: 100%; transition: none; }
+
+/* --- תחנה 5: מסלול --- */
+.ofx-earth-spin {
+  position: absolute;
+  inset: 18% 26% 30% 26%;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-inline-start-color: rgba(140, 210, 255, 0.5);
+  opacity: 0;
+}
+
+.phase-entry .ofx-earth-spin,
+.phase-active .ofx-earth-spin { opacity: 1; animation: spinRing 6s linear infinite; }
+
+.ofx-orbit {
+  position: absolute;
+  inset: 12% 18% 24% 18%;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.ofx-orbit.dashed { border: 1.5px dashed rgba(45, 212, 200, 0.75); }
+.ofx-orbit.solid {
+  border: 2px solid rgba(45, 212, 200, 0.95);
+  box-shadow: 0 0 10px rgba(45, 212, 200, 0.5), inset 0 0 10px rgba(45, 212, 200, 0.25);
+}
+
+.phase-entry .ofx-orbit.dashed,
+.phase-active .ofx-orbit.dashed { animation: orbitAppear 1.2s ease forwards; }
+.phase-success .ofx-orbit.solid,
+.phase-completed .ofx-orbit.solid { opacity: 1; transition: opacity 0.6s; }
+
+@keyframes orbitAppear {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.ofx-carrier {
+  position: absolute;
+  inset: 12% 18% 24% 18%;
+  opacity: 0;
+}
+
+.phase-entry .ofx-carrier,
+.phase-active .ofx-carrier { opacity: 1; animation: spinRing 7s linear infinite; }
+.phase-success .ofx-carrier { opacity: 1; animation: spinRing 2.4s linear 1; }
+.phase-completed .ofx-carrier { opacity: 1; animation: spinRing 16s linear infinite; }
+
+.ofx-sat-dot {
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-main);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+}
+
+.ofx-speed {
+  position: absolute;
+  bottom: 10%;
+  inset-inline-start: 50%;
+  transform: translateX(50%);
+  direction: ltr;
+  color: var(--teal);
+  font-size: clamp(6px, 0.55vw, 10px);
+  font-weight: 700;
+  background: rgba(6, 13, 26, 0.75);
+  border: 1px solid var(--teal-dim);
+  border-radius: 3px;
+  padding: 0 5px;
+  opacity: 0;
+  transition: opacity 0.6s ease 0.4s;
+}
+
+.phase-success .ofx-speed,
+.phase-completed .ofx-speed { opacity: 1; }
+
+.ofx-lock-flash {
+  position: absolute;
+  inset: 6% 12% 18% 12%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(45, 212, 200, 0.3), transparent 70%);
+  opacity: 0;
+}
+
+.phase-success .ofx-lock-flash { animation: openFlash 0.9s ease-out 1; }
+
+/* --- תחנה 6: כספת --- */
+.stfx-vault { perspective: 520px; }
+
+.vfx-cavity {
+  position: absolute;
+  inset: 8% 12% 14% 12%;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #05080e, #101820);
+  box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.95);
+  opacity: 0;
+  transition: opacity 0.5s ease 0.6s;
+}
+
+.phase-entry .vfx-cavity,
+.phase-active .vfx-cavity,
+.phase-success .vfx-cavity,
+.phase-completed .vfx-cavity { opacity: 1; }
+
+.vfx-cavity-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 5px;
+  background: radial-gradient(ellipse at 50% 40%, rgba(240, 168, 66, 0.32), transparent 70%);
+  animation: cabinetBreath 3.4s ease-in-out infinite;
+}
+
+.vfx-case {
+  position: absolute;
+  inset-inline: 22%;
+  bottom: 12%;
+  height: 42%;
+  background: linear-gradient(180deg, #8a5a2c, #6b4420);
+  border: 1.5px solid #c9944e;
+  border-radius: 4px;
+  box-shadow: 0 5px 9px rgba(0, 0, 0, 0.7);
+  transform: translateZ(0) translateY(6%);
+  transition: transform 0.7s ease 1.1s;
+}
+
+.phase-entry .vfx-case,
+.phase-active .vfx-case { transform: translateY(-8%) scale(1.05); }
+.phase-success .vfx-case,
+.phase-completed .vfx-case { transform: translateY(-12%) scale(1.08); }
+
+.vfx-case-handle {
+  position: absolute;
+  top: -14%;
+  inset-inline-start: 36%;
+  width: 28%;
+  height: 16%;
+  border: 2px solid #c9944e;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+}
+
+.vfx-stamp {
+  position: absolute;
+  top: 16%;
+  inset-inline-start: 50%;
+  transform: translateX(50%) rotate(-8deg) scale(1.6);
+  color: #6fd8a5;
+  border: 1.5px solid #3fae7a;
+  border-radius: 3px;
+  padding: 0 4px;
+  font-size: clamp(5px, 0.5vw, 9px);
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.phase-success .vfx-stamp,
+.phase-completed .vfx-stamp {
+  opacity: 1;
+  transform: translateX(50%) rotate(-8deg) scale(1);
+  transition: transform 0.4s cubic-bezier(0.2, 1.4, 0.4, 1) 0.5s, opacity 0.2s 0.5s;
+}
+
+.vfx-need {
+  position: absolute;
+  bottom: 10%;
+  inset-inline-start: 50%;
+  transform: translateX(50%);
+  color: var(--amber);
+  font-size: clamp(5px, 0.5vw, 9px);
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.5s ease 1s;
+}
+
+.phase-success .vfx-need,
+.phase-completed .vfx-need { opacity: 1; }
+
+/* דלת הכספת: משתלבת בדלת שבתמונה כשהיא סגורה */
+.vfx-door {
+  position: absolute;
+  inset: 6% 10% 12% 10%;
+  border-radius: 6px;
+  background: linear-gradient(160deg, rgba(58, 66, 76, 0.85), rgba(34, 40, 48, 0.85));
+  border: 2px solid rgba(90, 100, 112, 0.9);
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.5);
+  transform-origin: 100% 50%;
+  transition: transform 1s cubic-bezier(0.35, 0, 0.25, 1) 0.55s;
+  opacity: 0;
+}
+
+.phase-available .vfx-door,
+.phase-entry .vfx-door,
+.phase-active .vfx-door,
+.phase-success .vfx-door,
+.phase-completed .vfx-door { opacity: 1; }
+
+.phase-entry .vfx-door,
+.phase-active .vfx-door,
+.phase-success .vfx-door { transform: rotateY(96deg); }
+.phase-completed .vfx-door { transform: rotateY(96deg); transition: none; }
+
+.vfx-window {
+  position: absolute;
+  top: 12%;
+  inset-inline-start: 28%;
+  width: 44%;
+  height: 20%;
+  border-radius: 4px;
+  background: linear-gradient(160deg, rgba(140, 190, 215, 0.3), rgba(30, 50, 65, 0.6));
+  border: 1.5px solid rgba(120, 140, 155, 0.9);
+}
+
+.vfx-wheel {
+  position: absolute;
+  top: 44%;
+  inset-inline-start: 30%;
+  width: 40%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2.5px solid rgba(150, 160, 172, 0.95);
+  background: radial-gradient(circle, rgba(70, 80, 92, 0.9) 18%, transparent 20%);
+}
+
+.phase-entry .vfx-wheel { animation: wheelSpin 0.6s ease-in-out 1; }
+
+@keyframes wheelSpin { to { transform: rotate(360deg); } }
+
+.vfx-spoke {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46%;
+  height: 2px;
+  background: rgba(150, 160, 172, 0.95);
+  transform-origin: 0 50%;
+}
+
+.vfx-spoke.sp-0 { transform: rotate(0deg); }
+.vfx-spoke.sp-1 { transform: rotate(120deg); }
+.vfx-spoke.sp-2 { transform: rotate(240deg); }
+
+.vfx-bolt {
+  position: absolute;
+  left: 4%;
+  width: 12%;
+  height: 4%;
+  background: rgba(160, 170, 182, 0.95);
+  border-radius: 2px;
+  transition: transform 0.18s ease;
+}
+
+.vfx-bolt.b-0 { top: 22%; }
+.vfx-bolt.b-1 { top: 48%; }
+.vfx-bolt.b-2 { top: 74%; }
+
+.phase-entry .vfx-bolt.b-0 { transform: translateX(90%); transition-delay: 0.5s; }
+.phase-entry .vfx-bolt.b-1 { transform: translateX(90%); transition-delay: 0.7s; }
+.phase-entry .vfx-bolt.b-2 { transform: translateX(90%); transition-delay: 0.9s; }
+.phase-active .vfx-bolt,
+.phase-success .vfx-bolt,
+.phase-completed .vfx-bolt { transform: translateX(90%); }
+
+.vfx-hinge {
+  position: absolute;
+  inset-block: 8%;
+  right: -1.5%;
+  width: 3%;
+  background: rgba(110, 120, 132, 0.95);
+  border-radius: 2px;
+}
+
+.vfx-success-pulse {
+  position: absolute;
+  inset: -4%;
+  border-radius: 12px;
+  background: radial-gradient(ellipse, rgba(63, 174, 122, 0.3), transparent 70%);
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+.phase-success .vfx-success-pulse { animation: solvedPulse 1.3s ease-out 2; }
+
+/* --- הלוויין התלוי: התקדמות --- */
+.stfx-satellite > span { position: absolute; opacity: 0; transition: opacity 0.8s; }
+
+.sfx-lens {
+  top: 62%;
+  inset-inline-start: 49%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 7px rgba(240, 168, 66, 0.95);
+}
+
+.sat-level-1 .sfx-lens { opacity: 1; animation: lensBlinkOnce 2.4s ease 1 forwards; }
+.sat-level-2 .sfx-lens, .sat-level-3 .sfx-lens, .sat-level-4 .sfx-lens,
+.sat-level-5 .sfx-lens, .sat-level-6 .sfx-lens, .sat-level-7 .sfx-lens { opacity: 1; }
+
+@keyframes lensBlinkOnce {
+  0%, 100% { opacity: 0.25; }
+  20%, 60% { opacity: 1; }
+  40% { opacity: 0.2; }
+}
+
+.sfx-lens-ring {
+  top: 58%;
+  inset-inline-start: 46.6%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(240, 168, 66, 0.85);
+}
+
+.sat-level-2 .sfx-lens-ring, .sat-level-3 .sfx-lens-ring, .sat-level-4 .sfx-lens-ring,
+.sat-level-5 .sfx-lens-ring, .sat-level-6 .sfx-lens-ring, .sat-level-7 .sfx-lens-ring { opacity: 1; }
+
+.sfx-antenna {
+  top: 22%;
+  inset-inline-start: 58%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--teal);
+  box-shadow: 0 0 6px rgba(45, 212, 200, 0.8);
+}
+
+.sat-level-3 .sfx-antenna, .sat-level-4 .sfx-antenna, .sat-level-5 .sfx-antenna,
+.sat-level-6 .sfx-antenna, .sat-level-7 .sfx-antenna { opacity: 1; animation: ledBreath 3.6s ease-in-out infinite; }
+
+.sfx-panel {
+  top: 28%;
+  width: 20%;
+  height: 30%;
+  border-radius: 4px;
+  background: rgba(80, 170, 235, 0.16);
+  box-shadow: inset 0 0 10px rgba(80, 170, 235, 0.35);
+}
+
+.sfx-panel.p-right { inset-inline-start: 8%; }
+.sfx-panel.p-left { inset-inline-end: 8%; }
+
+.sat-level-4 .sfx-panel, .sat-level-5 .sfx-panel,
+.sat-level-6 .sfx-panel, .sat-level-7 .sfx-panel { opacity: 1; }
+
+.sfx-orbit-line {
+  top: 30%;
+  inset-inline-start: 18%;
+  width: 64%;
+  height: 40%;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(45, 212, 200, 0.6);
+}
+
+.sat-level-5 .sfx-orbit-line, .sat-level-6 .sfx-orbit-line, .sat-level-7 .sfx-orbit-line { opacity: 1; }
+
+.sat-level-6 .sfx-lens { box-shadow: 0 0 12px rgba(240, 168, 66, 1); }
+
+.sfx-beam {
+  top: 68%;
+  inset-inline-start: 47%;
+  width: 6%;
+  height: 90%;
+  background: linear-gradient(180deg, rgba(240, 168, 66, 0.5), transparent);
+  clip-path: polygon(28% 0, 72% 0, 100% 100%, 0 100%);
+}
+
+.sat-level-7 .sfx-beam { opacity: 1; animation: batteryPulse 2.6s ease-in-out infinite; }
+.sat-level-7 .sfx-panel { opacity: 1; box-shadow: inset 0 0 14px rgba(80, 170, 235, 0.6); }
+.sat-level-7 .sfx-lens { opacity: 1; box-shadow: 0 0 14px rgba(240, 168, 66, 1); }
+
+/* --- כפתור דילוג והודעת נעילה --- */
+.skip-entry-button {
+  position: absolute;
+  bottom: 96px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 45;
+  background: rgba(6, 13, 26, 0.88);
+  border: 1px solid var(--teal-dim);
+  color: var(--text-main);
+  border-radius: 999px;
+  padding: 8px 20px;
+  font-size: 0.95rem;
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.4s ease 0.3s both;
+}
+
+.skip-entry-button:hover { border-color: var(--teal); }
+
+.locked-toast {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 45;
+  background: rgba(26, 10, 10, 0.92);
+  border: 1px solid var(--danger);
+  color: #f0b5b5;
+  border-radius: 999px;
+  padding: 8px 20px;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  animation: popIn 0.35s ease both;
+  backdrop-filter: blur(3px);
+}
+
+/* --- פאנל כיול אפקטים --- */
+.effects-debug-panel {
+  position: absolute;
+  top: 16px;
+  left: 70px;
+  z-index: 40;
+  background: rgba(6, 13, 26, 0.92);
+  border: 1px solid #ff78dc;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #ff78dc;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  pointer-events: auto;
+}
+
+.debug-row { display: flex; align-items: center; gap: 3px; }
+.debug-station { width: 120px; overflow: hidden; text-overflow: ellipsis; }
+
+.debug-btn {
+  background: transparent;
+  border: 1px solid #ff78dc66;
+  color: #ff78dc;
+  border-radius: 3px;
+  font-size: 10px;
+  padding: 1px 5px;
+  cursor: pointer;
+}
+
+.debug-btn.on { background: #ff78dc; color: #10041a; }
+.debug-btn.replay { margin-top: 4px; }
+
+/* reduced motion: האפקטים הפיזיים עוברים ללא אנימציות תנועה */
+@media (prefers-reduced-motion: reduce) {
+  .stfx *, .stfx {
+    animation-duration: 0.25s !important;
+    transition-duration: 0.2s !important;
+  }
+}
+
 /* --- מצב כיול (?effectsDebug=1) --- */
 .effects-debug .effect-anchor {
   outline: 1px dashed rgba(255, 120, 220, 0.85);
