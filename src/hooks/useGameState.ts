@@ -14,6 +14,7 @@ export const INITIAL_STATE: GameState = {
   findings: [],
   muted: false,
   finalAssembly: { completed: false, remainingSeconds: null },
+  effectsPlayed: {},
 };
 
 /** הזמן שנותר למשימה בשניות, נגזר מזמן ההתחלה */
@@ -38,6 +39,7 @@ function loadState(): GameState {
         ...INITIAL_STATE.finalAssembly,
         ...(parsed.finalAssembly ?? {}),
       },
+      effectsPlayed: parsed.effectsPlayed ?? {},
     };
   } catch {
     return INITIAL_STATE;
@@ -105,6 +107,12 @@ function reducer(state: GameState, action: GameAction): GameState {
           completed: true,
           remainingSeconds: action.remainingSeconds,
         },
+      };
+    case 'MARK_EFFECT_PLAYED':
+      if (state.effectsPlayed[action.stationId]) return state;
+      return {
+        ...state,
+        effectsPlayed: { ...state.effectsPlayed, [action.stationId]: true },
       };
     case 'RESET':
       return INITIAL_STATE;

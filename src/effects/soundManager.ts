@@ -9,7 +9,18 @@ export type RoomSound =
   | 'stationOpen'  // תחנה שנפתחה
   | 'unlock'       // מנעול שהשתחרר
   | 'correct'      // תשובה נכונה
-  | 'newStation';  // תחנה חדשה שנפתחה
+  | 'newStation'   // תחנה חדשה שנפתחה
+  | 'lockedClick'  // קליק נעילה עדין (תחנה נעולה)
+  | 'drawer'       // מגירה מחליקה
+  | 'glassDoor'    // דלת זכוכית
+  | 'tray'         // מגש מחליק
+  | 'motor'        // מנוע סיבוב
+  | 'radioWave'    // גל רדיו
+  | 'powerCharge'  // טעינת כוח
+  | 'orbitLock'    // נעילת מסלול
+  | 'vaultWheel'   // גלגל כספת
+  | 'vaultBolt'    // בריח כספת (קליק מכני)
+  | 'metalDoor';   // דלת מתכת נפתחת
 
 let ctx: AudioContext | null = null;
 let muted = false;
@@ -154,6 +165,55 @@ export const soundManager = {
         tone(audio, 660, 990, 0, 0.16, 'sine', 0.07);
         tone(audio, 1320, 1320, 0.18, 0.1, 'sine', 0.05);
         break;
+      case 'lockedClick':
+        tone(audio, 220, 180, 0, 0.06, 'square', 0.04);
+        break;
+      case 'drawer':
+        tone(audio, 140, 90, 0, 0.28, 'sawtooth', 0.045);
+        tone(audio, 480, 480, 0.26, 0.05, 'square', 0.04);
+        break;
+      case 'glassDoor':
+        tone(audio, 900, 1250, 0, 0.22, 'sine', 0.035);
+        tone(audio, 1600, 1600, 0.2, 0.06, 'triangle', 0.03);
+        break;
+      case 'tray':
+        tone(audio, 200, 150, 0, 0.18, 'triangle', 0.045);
+        break;
+      case 'motor':
+        tone(audio, 95, 130, 0, 0.5, 'sawtooth', 0.04);
+        tone(audio, 190, 260, 0.05, 0.45, 'triangle', 0.03);
+        break;
+      case 'radioWave':
+        tone(audio, 1100, 1500, 0, 0.14, 'sine', 0.05);
+        tone(audio, 1500, 1100, 0.16, 0.14, 'sine', 0.04);
+        break;
+      case 'powerCharge':
+        tone(audio, 180, 720, 0, 0.6, 'sine', 0.06);
+        break;
+      case 'orbitLock':
+        tone(audio, 500, 500, 0, 0.08, 'square', 0.05);
+        tone(audio, 750, 750, 0.1, 0.14, 'sine', 0.06);
+        break;
+      case 'vaultWheel':
+        tone(audio, 110, 80, 0, 0.45, 'sawtooth', 0.05);
+        tone(audio, 330, 240, 0.04, 0.4, 'triangle', 0.03);
+        break;
+      case 'vaultBolt':
+        tone(audio, 260, 200, 0, 0.05, 'square', 0.06);
+        tone(audio, 130, 110, 0.05, 0.07, 'square', 0.04);
+        break;
+      case 'metalDoor':
+        tone(audio, 90, 60, 0, 0.55, 'sawtooth', 0.05);
+        tone(audio, 45, 40, 0.1, 0.5, 'sine', 0.05);
+        break;
+    }
+  },
+
+  /** רצף צלילים עם השהיות (מנוקה אוטומטית — טיימרים חד-פעמיים) */
+  playSequence(steps: Array<{ sound: RoomSound; delay: number }>) {
+    for (const step of steps) {
+      if (step.delay <= 0) this.play(step.sound);
+      else setTimeout(() => this.play(step.sound), step.delay);
     }
   },
 

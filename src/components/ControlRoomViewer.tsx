@@ -7,16 +7,22 @@ import {
 import { getStationStatus } from '../hooks/useGameState';
 import type { StationId } from '../types/game';
 import { RoomEffectsLayer } from './RoomEffectsLayer';
+import type { StationPhase } from './StationEffects';
 
 interface ControlRoomViewerProps {
   solvedStations: StationId[];
   onOpenStation: (stationId: StationId) => void;
+  /** לחיצה על תחנה נעולה (משוב נעילה בלבד, לא פתיחה) */
+  onLockedStation?: (stationId: StationId) => void;
   /** הצגת מוקד ההרכבה הסופית במרכז החדר (כשכל שש החידות נפתרו) */
   showFinalHotspot?: boolean;
   onOpenFinal?: () => void;
   /** נתונים לשכבת האפקטים — נגזרים ממצב המשחק הקיים */
   openStationId?: StationId | null;
   finalCompleted?: boolean;
+  pendingStation?: StationId | null;
+  successStation?: StationId | null;
+  lockedPulse?: { stationId: StationId; seq: number } | null;
 }
 
 /** הגדלת הפתיחה — החדר רחב מאזור התצוגה כבר בכניסה, כך שתמיד יש מה לגרור */
@@ -32,12 +38,24 @@ const ZOOM_STEP = 0.25;
 export function ControlRoomViewer({
   solvedStations,
   onOpenStation,
+  onLockedStation,
   showFinalHotspot = false,
   onOpenFinal,
   openStationId = null,
   finalCompleted = false,
+  pendingStation = null,
+  successStation = null,
+  lockedPulse = null,
 }: ControlRoomViewerProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
+  // מצב כיול (?effectsDebug=1): דריסות שלב + פאנל שליטה
+  const effectsDebug =
+    typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).get('effectsDebug') === '1';
+  const [debugOverrides, setDebugOverrides] = useState<
+    Partial<Record<StationId, StationPhase>>
+  >({});
+  const [debugReplay, setDebugReplay] = useState(0);
   const [viewport, setViewport] = useState({ width: 0, height: 0 });
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [offsetX, setOffsetX] = useState<number | null>(null);
@@ -137,9 +155,14 @@ export function ControlRoomViewer({
 
         {/* שכבת האפקטים — נעה עם החדר, מעל התמונה ומתחת לנקודות הלחיצה */}
         <RoomEffectsLayer
+          key={effectsDebug ? debugReplay : undefined}
           solvedStations={solvedStations}
           openStationId={openStationId}
           finalCompleted={finalCompleted}
+          pendingStation={pendingStation}
+          successStation={successStation}
+          lockedPulse={lockedPulse}
+          debugOverrides={effectsDebug ? debugOverrides : undefined}
         />
         {STATIONS.map((station) => {
           const status = getStationStatus(station.id, solvedStations);
@@ -153,8 +176,12 @@ export function ControlRoomViewer({
                 left: `${station.hotspot.x}%`,
                 top: `${station.hotspot.y}%`,
               }}
-              disabled={!isClickable}
-              onClick={() => isClickable && onOpenStation(station.id)}
+              disabled={status === 'solved'}
+              onClick={() =>
+                isClickable
+                  ? onOpenStation(station.id)
+                  : status === 'locked' && onLockedStation?.(station.id)
+              }
               aria-label={
                 status === 'locked'
                   ? `${station.title} — עמדה נעולה`
@@ -213,6 +240,43 @@ export function ControlRoomViewer({
         <span aria-hidden="true">🖐️</span>
         <span>גררו כדי לסרוק את חדר הבקרה ולחצו על העמדה הפעילה</span>
       </div>
+
+      {/* פאנל כיול — מוצג אך ורק עם ?effectsDebug=1 */}
+      {effectsDebug && (
+        <div className="effects-debug-panel" dir="ltr">
+          <strong>Effects debug</strong>
+          {STATIONS.map((station) => (
+            <div key={station.id} className="debug-row">
+              <span className="debug-station">{station.id}</span>
+              {(['locked', 'available', 'entry', 'active', 'success', 'completed'] as StationPhase[]).map(
+                (p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    className={`debug-btn${debugOverrides[station.id] === p ? ' on' : ''}`}
+                    title={p}
+                    onClick={() =>
+                      setDebugOverrides((prev) => ({
+                        ...prev,
+                        [station.id]: prev[station.id] === p ? undefined : p,
+                      }))
+                    }
+                  >
+                    {p[0].toUpperCase()}
+                  </button>
+                ),
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            className="debug-btn replay"
+            onClick={() => setDebugReplay((n) => n + 1)}
+          >
+            ↺ replay
+          </button>
+        </div>
+      )}
     </div>
   );
 }
