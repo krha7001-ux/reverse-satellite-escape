@@ -4328,3 +4328,890 @@ input {
 .step-orbit {
   align-items: safe center;
 }
+
+/* ============================================================
+   מעטפת קולנועית — CinematicStationShell (חידה 1: התצלום האחרון)
+   ============================================================ */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.cine-overlay {
+  padding: 0;
+  align-items: stretch;
+  background: rgba(1, 4, 9, 0.9);
+}
+
+.cine-scroll {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--teal-dim) rgba(6, 13, 26, 0.6);
+}
+
+.cine-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.cine-scroll::-webkit-scrollbar-track {
+  background: rgba(6, 13, 26, 0.6);
+}
+
+.cine-scroll::-webkit-scrollbar-thumb {
+  background: var(--teal-dim);
+  border-radius: 5px;
+}
+
+.cine-viewport {
+  flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.cine-crop {
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.cine-stage {
+  position: relative;
+  animation: cineEnter 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  transform-origin: 50% 46%;
+}
+
+@keyframes cineEnter {
+  from { transform: scale(1.06); }
+  to { transform: scale(1); }
+}
+
+.cine-image,
+.cine-content {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* התמונה והפקדים נעים יחד — עומק ה-parallax מגיע משכבת הזכוכית */
+  transform: translate3d(
+      calc(var(--par-x, 0) * -5px),
+      calc(var(--par-y, 0) * -3px),
+      0
+    )
+    scale(1.012);
+  transition: transform 0.18s ease-out;
+}
+
+.cine-image {
+  object-fit: fill;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.cine-lighting {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.cine-glass-reflection {
+  position: absolute;
+  inset: -4%;
+  background:
+    linear-gradient(112deg, transparent 26%, rgba(190, 225, 255, 0.055) 34%, rgba(190, 225, 255, 0.015) 43%, transparent 52%),
+    linear-gradient(292deg, transparent 60%, rgba(120, 190, 220, 0.04) 74%, transparent 86%);
+  transform: translate3d(calc(var(--par-x, 0) * 12px), calc(var(--par-y, 0) * 8px), 0);
+  transition: transform 0.22s ease-out;
+}
+
+.cine-light-sweep {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    58% 46% at calc(50% + var(--par-x, 0) * 9%) calc(38% + var(--par-y, 0) * 8%),
+    rgba(140, 190, 230, 0.07),
+    transparent 70%
+  );
+  transition: background 0.22s ease-out;
+}
+
+.cine-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(118% 96% at 50% 46%, transparent 58%, rgba(0, 0, 0, 0.42) 100%);
+}
+
+/* --- רצועת ההוראות העליונה (זכוכית צרה) --- */
+.cine-top-strip {
+  position: sticky;
+  top: 0;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 16px;
+  background: rgba(7, 13, 23, 0.68);
+  backdrop-filter: blur(9px);
+  border-bottom: 1px solid rgba(45, 212, 200, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.cine-strip-title {
+  color: var(--teal);
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.cine-strip-text {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.cine-strip-text.alert {
+  color: var(--amber);
+  font-weight: 700;
+}
+
+.cine-strip-text.success {
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.cine-back {
+  flex: 0 0 auto;
+  padding: 6px 14px;
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  background: rgba(20, 28, 40, 0.6);
+  border: 1px solid var(--graphite-light);
+  border-radius: 8px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.cine-back:hover {
+  color: var(--text-main);
+  border-color: var(--teal-dim);
+}
+
+/* --- סרגל הפעולה הדביק בתחתית --- */
+.cine-bottom-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 9px 16px;
+  background: rgba(7, 13, 23, 0.72);
+  backdrop-filter: blur(9px);
+  border-top: 1px solid rgba(45, 212, 200, 0.2);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* מתג פיזי מואר — הפעולה הראשית */
+.cine-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 22px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  background: linear-gradient(180deg, #2b3340, #171d27 55%, #10151d);
+  border: 1px solid #3a4454;
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 3px 10px rgba(0, 0, 0, 0.55);
+  transition: transform 0.12s, box-shadow 0.12s, border-color 0.15s;
+}
+
+.cine-switch:hover {
+  border-color: var(--teal-dim);
+}
+
+.cine-switch:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.cine-switch.primary,
+.cine-switch.modal-button.primary {
+  color: #06231f;
+  background: linear-gradient(180deg, #4ee6d4, #23b3a2 60%, #1a8d80);
+  border-color: rgba(45, 212, 200, 0.8);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 0 18px rgba(45, 212, 200, 0.35),
+    0 3px 10px rgba(0, 0, 0, 0.5);
+}
+
+.cine-switch-lamp {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff8e0, var(--amber) 60%, #7a4c00);
+  box-shadow: 0 0 10px rgba(240, 168, 66, 0.9);
+  animation: cineLampPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes cineLampPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.cine-glass-button {
+  padding: 8px 16px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--teal);
+  background: rgba(17, 30, 40, 0.65);
+  border: 1px solid var(--teal-dim);
+  border-radius: 9px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.cine-glass-button:hover {
+  background: rgba(24, 44, 56, 0.75);
+  border-color: var(--teal);
+}
+
+.cine-glass-button:disabled {
+  opacity: 0.45;
+}
+
+.cine-bottom-bar .submit-button {
+  width: auto;
+}
+
+.cine-success-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* --- המסך הפיזי --- */
+.cine-screen {
+  border-radius: 0.6em;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 100% at 50% 0%, #0b1620 0%, #050a11 60%, #03060b 100%);
+  box-shadow: inset 0 0 3em rgba(0, 0, 0, 0.8);
+}
+
+.cine-screen-square {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  aspect-ratio: 1;
+}
+
+.cine-screen .photo-canvas {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.cine-screen-glass {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.09) 0%, transparent 16%),
+    radial-gradient(130% 90% at 50% 112%, rgba(45, 212, 200, 0.08), transparent 55%),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.11) 0 1px, transparent 1px 3px);
+  box-shadow: inset 0 0 2.6em rgba(0, 0, 0, 0.78);
+}
+
+.cine-screen-boot {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cine-screen-boot .static-noise {
+  position: absolute;
+  inset: 0;
+}
+
+.cine-boot-message {
+  position: relative;
+  z-index: 1;
+  max-width: 78%;
+  text-align: center;
+  font-size: 1.15em;
+  line-height: 1.7;
+  color: var(--amber);
+  text-shadow: 0 0 14px rgba(240, 168, 66, 0.6);
+  background: rgba(4, 8, 14, 0.82);
+  border: 1px solid rgba(240, 168, 66, 0.65);
+  border-radius: 0.5em;
+  padding: 0.9em 1.3em;
+  animation: fadeIn 0.6s ease 0.4s both;
+}
+
+/* קו סריקה טורקיז — עובר פעם אחת על המסך בלבד */
+.cine-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -3%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--teal) 30%, #b7fff6 50%, var(--teal) 70%, transparent);
+  box-shadow: 0 0 16px rgba(45, 212, 200, 0.9), 0 0 40px rgba(45, 212, 200, 0.4);
+  animation: cineScan 1.35s ease-in-out 0.1s 1 both;
+  pointer-events: none;
+}
+
+@keyframes cineScan {
+  from { top: -3%; opacity: 0.95; }
+  85% { opacity: 0.95; }
+  to { top: 102%; opacity: 0; }
+}
+
+.cine-finding-badge {
+  position: absolute;
+  top: 5%;
+  left: 4%;
+  padding: 0.3em 0.9em;
+  font-size: 0.95em;
+  font-weight: 700;
+  color: var(--teal);
+  background: rgba(8, 18, 26, 0.72);
+  border: 1px solid rgba(45, 212, 200, 0.5);
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.7s ease 0.5s both;
+  pointer-events: none;
+}
+
+/* --- נורות מצב השלבים --- */
+.cine-step-lamps {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cine-lamp {
+  width: 78%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #23272d, #101317 70%);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.8),
+    0 1px 0 rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.cine-lamp i {
+  font-style: normal;
+  font-size: 0.62em;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.cine-lamp.on {
+  background: radial-gradient(circle at 38% 32%, #ffe9c2, var(--amber) 55%, #8a5a10);
+  box-shadow:
+    0 0 14px rgba(240, 168, 66, 0.85),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.cine-lamp.on i {
+  color: #3d2600;
+}
+
+.cine-lamp.done {
+  background: radial-gradient(circle at 38% 32%, #7de8dc, #1b8d80 60%, #0d4a43);
+  box-shadow: 0 0 8px rgba(45, 212, 200, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.35);
+}
+
+.cine-lamp.done i {
+  color: #04211d;
+}
+
+/* --- צוהר התצוגה (LCD) --- */
+.cine-lcd {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15em;
+  text-align: center;
+  background: linear-gradient(180deg, #17130a, #0d0b05 70%);
+  border-radius: 0.35em;
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.85),
+    inset 0 0 1.4em rgba(240, 168, 66, 0.07);
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+  padding: 0.2em 0.5em;
+  overflow: hidden;
+}
+
+.cine-lcd-idle {
+  color: rgba(240, 168, 66, 0.4);
+  letter-spacing: 0.3em;
+}
+
+.cine-lcd-label {
+  font-size: 0.62em;
+  color: rgba(240, 168, 66, 0.75);
+  white-space: nowrap;
+}
+
+.cine-lcd-value {
+  font-size: 0.95em;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(240, 168, 66, 0.6);
+  white-space: nowrap;
+}
+
+.cine-lcd-waiting {
+  font-size: 0.6em;
+  line-height: 1.35;
+  color: rgba(240, 168, 66, 0.8);
+}
+
+.cine-lcd-code {
+  font-size: 1.05em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-shadow: 0 0 12px rgba(240, 168, 66, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.cine-lcd-code.ok {
+  color: var(--teal);
+  text-shadow: 0 0 12px rgba(45, 212, 200, 0.75);
+}
+
+/* ה-LCD בקוד קצר משתמש בגופן גדול; placeholder טקסטואלי קטן יותר */
+.cine-lcd .cine-lcd-code:not(.ok):not(:empty) {
+  font-size: 1.05em;
+}
+
+/* --- המקלדת הפיזית --- */
+.cine-keypad.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr;
+  /* em — נמדד לפי גודל הבמה; אחוזים כאן היו נמדדים לפי רוחב הבמה כולה */
+  gap: 0.8em 0.72em;
+  padding: 0.72em;
+}
+
+.cine-key.keypad-key {
+  padding: 0;
+  font-size: 0.95em;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.38);
+  background: linear-gradient(180deg, #2c313a, #1a1e25 60%, #14171d);
+  border: 1px solid #0b0d11;
+  border-radius: 0.3em;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0.18em 0.3em rgba(0, 0, 0, 0.65);
+  transition: transform 0.08s, box-shadow 0.08s, color 0.2s;
+}
+
+.cine-keypad.active .cine-key.keypad-key {
+  color: var(--amber);
+  text-shadow: 0 0 8px rgba(240, 168, 66, 0.55);
+}
+
+.cine-keypad.active .cine-key.keypad-key:hover {
+  background: linear-gradient(180deg, #343a45, #20242c 60%, #171a20);
+  transform: none;
+}
+
+/* שקיעה קצרה + הבזק אור בלחיצה */
+.cine-keypad.active .cine-key.keypad-key:active {
+  transform: translateY(0.14em);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 0 0.7em rgba(240, 168, 66, 0.35),
+    0 0.04em 0.1em rgba(0, 0, 0, 0.6);
+  color: #ffe9c2;
+}
+
+.cine-key.keypad-key:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.cine-key.keypad-key.action {
+  font-size: 0.72em;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.cine-keypad.active .cine-key.keypad-key.action {
+  color: rgba(240, 168, 66, 0.85);
+}
+
+/* --- החוגה הפיזית --- */
+.cine-dial {
+  border-radius: 50%;
+  cursor: pointer;
+  outline-offset: 4px;
+}
+
+.cine-dial.disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+
+.cine-dial:focus-visible {
+  outline: 2px solid var(--teal);
+}
+
+.cine-dial-knob {
+  position: absolute;
+  inset: 9%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 28%, #454c58, #23272f 52%, #13161b 78%, #0a0c0f);
+  box-shadow:
+    inset 0 2px 3px rgba(255, 255, 255, 0.16),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.7),
+    0 0.25em 0.7em rgba(0, 0, 0, 0.75);
+  transition: transform 0.22s cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+
+.cine-dial-pointer {
+  position: absolute;
+  top: 7%;
+  left: 50%;
+  width: 7%;
+  height: 24%;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #b7fff6, var(--teal));
+  box-shadow: 0 0 10px rgba(45, 212, 200, 0.9);
+}
+
+.cine-dial-ticks {
+  position: absolute;
+  inset: -9%;
+  pointer-events: none;
+}
+
+.cine-dial-tick {
+  position: absolute;
+  inset: 0;
+}
+
+.cine-dial-tick i {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 7%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 1px;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.cine-dial-tick.current i {
+  background: var(--teal);
+  box-shadow: 0 0 8px rgba(45, 212, 200, 0.9);
+}
+
+.cine-dial-readout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78em;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--teal);
+  text-shadow: 0 0 10px rgba(45, 212, 200, 0.6);
+  background: linear-gradient(180deg, #0a1512, #060d0b);
+  border-radius: 0.3em;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.85);
+}
+
+/* --- מגירת „ממצא 1” --- */
+.cine-drawer {
+  pointer-events: none;
+  z-index: 5;
+}
+
+.cine-drawer-face {
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  top: 12%;
+  height: 60%;
+  border-radius: 0.35em;
+  background: linear-gradient(180deg, #2a2f38, #191d24 55%, #101318);
+  border: 1px solid #0a0c10;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 1em 2em rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  transform: translateY(-88%) scaleY(0.1);
+  transform-origin: top;
+  transition: transform 0.55s cubic-bezier(0.22, 0.9, 0.34, 1.05), opacity 0.3s;
+}
+
+.cine-drawer.open .cine-drawer-face {
+  opacity: 1;
+  transform: translateY(6%) scaleY(1);
+}
+
+.cine-finding-card {
+  position: absolute;
+  left: 50%;
+  bottom: 90%;
+  width: 150%;
+  max-width: 30em;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  background: linear-gradient(180deg, rgba(13, 26, 38, 0.97), rgba(8, 16, 26, 0.97));
+  border: 1px solid rgba(45, 212, 200, 0.55);
+  border-radius: 0.5em;
+  box-shadow:
+    0 0 26px rgba(45, 212, 200, 0.25),
+    0 1.2em 2.4em rgba(0, 0, 0, 0.65);
+  padding: 0.9em 1.2em;
+  text-align: center;
+  animation: cineCardRise 0.65s cubic-bezier(0.22, 0.9, 0.34, 1.05) 0.3s both;
+}
+
+@keyframes cineCardRise {
+  from { transform: translate(-50%, 45%) scale(0.9); opacity: 0; }
+  to { transform: translate(-50%, 0) scale(1); opacity: 1; }
+}
+
+.cine-finding-card .finding-title {
+  display: block;
+  color: var(--amber);
+  font-weight: 700;
+  font-size: 1em;
+  margin-bottom: 0.35em;
+}
+
+.cine-finding-card p {
+  color: var(--text-main);
+  font-size: 0.82em;
+  line-height: 1.55;
+}
+
+.cine-transition-message {
+  margin-top: 0.5em;
+  color: var(--teal) !important;
+  font-size: 0.76em !important;
+}
+
+/* --- מגירת המידע/הרמזים הצרה שבצד הקונסולה --- */
+.cine-side-drawer {
+  position: absolute;
+  top: 31.5%;
+  right: 0;
+  width: min(19em, 38%);
+  max-height: 42%;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  padding: 0.8em 1em;
+  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(24, 29, 37, 0.97), rgba(14, 18, 24, 0.97));
+  border: 1px solid rgba(45, 212, 200, 0.35);
+  border-right: none;
+  border-radius: 0.55em 0 0 0.55em;
+  box-shadow: -0.8em 0.6em 2em rgba(0, 0, 0, 0.6);
+  transform: translateX(105%);
+  visibility: hidden;
+  transition: transform 0.35s cubic-bezier(0.22, 0.9, 0.34, 1), visibility 0s linear 0.35s;
+}
+
+.cine-side-drawer.open {
+  transform: translateX(0);
+  visibility: visible;
+  transition: transform 0.35s cubic-bezier(0.22, 0.9, 0.34, 1), visibility 0s;
+}
+
+.cine-side-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--amber);
+  font-weight: 700;
+  font-size: 0.85em;
+  border-bottom: 1px solid rgba(240, 168, 66, 0.3);
+  padding-bottom: 0.35em;
+}
+
+.cine-side-drawer-close {
+  color: var(--text-dim);
+  font-size: 0.9em;
+  padding: 0.1em 0.4em;
+  border-radius: 6px;
+}
+
+.cine-side-drawer-close:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cine-side-drawer-text {
+  color: var(--teal);
+  font-size: 0.82em;
+  line-height: 1.6;
+}
+
+.cine-side-drawer-text.dim {
+  color: var(--text-dim);
+}
+
+.cine-side-drawer-count {
+  color: var(--text-dim);
+  font-size: 0.7em;
+}
+
+/* --- שכבת הכיול (?cinematicDebug=1) --- */
+.cine-debug-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.cine-debug-region {
+  position: absolute;
+  border: 1px dashed #ff4fd8;
+  background: rgba(255, 79, 216, 0.07);
+}
+
+.cine-debug-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(-100%);
+  font-size: 10px;
+  font-family: monospace;
+  color: #ff9dea;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 1px 4px;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+.cine-debug-panel {
+  position: absolute;
+  top: 52px;
+  left: 10px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  font-size: 0.8rem;
+  color: #ff9dea;
+  background: rgba(0, 0, 0, 0.82);
+  border: 1px solid #ff4fd8;
+  border-radius: 8px;
+}
+
+.cine-debug-panel label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.cine-debug-size {
+  font-family: monospace;
+  font-size: 0.72rem;
+  direction: ltr;
+  text-align: right;
+}
+
+/* --- הפחתת תנועה --- */
+@media (prefers-reduced-motion: reduce) {
+  .cine-stage {
+    animation: none;
+  }
+
+  .cine-image,
+  .cine-content,
+  .cine-glass-reflection {
+    transform: none;
+    transition: none;
+  }
+
+  .cine-light-sweep {
+    transition: none;
+  }
+
+  .cine-scan {
+    animation: cineScanReduced 0.6s ease 1 both;
+  }
+
+  @keyframes cineScanReduced {
+    from { top: 45%; opacity: 0.6; }
+    to { top: 55%; opacity: 0; }
+  }
+
+  .cine-switch-lamp {
+    animation: none;
+  }
+
+  .cine-drawer-face,
+  .cine-side-drawer {
+    transition: opacity 0.2s, visibility 0.2s;
+  }
+
+  .cine-finding-card {
+    animation: fadeIn 0.3s ease both;
+  }
+
+  .cine-dial-knob {
+    transition: none;
+  }
+}
