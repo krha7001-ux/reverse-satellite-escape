@@ -51,12 +51,12 @@ async function assertReachable(page, selector, label) {
 /** בדיקות כלליות לשלב חידה פתוח */
 async function checkStep(page, label, actionSelectors) {
   const noHScroll = await page.evaluate(() => {
-    const el = document.querySelector('.terminal-step');
+    const el = document.querySelector('.terminal-step, .cine-scroll');
     return el ? el.scrollWidth <= el.clientWidth + 1 : true;
   });
   if (!noHScroll) fail(`${label}: גלילה אופקית בתוך השלב`);
   const scrollable = await page.evaluate(() => {
-    const el = document.querySelector('.terminal-step');
+    const el = document.querySelector('.terminal-step, .cine-scroll');
     if (!el) return true;
     if (el.scrollHeight <= el.clientHeight + 1) return true;
     return getComputedStyle(el).overflowY === 'auto';
@@ -96,18 +96,22 @@ async function sweepPuzzle1(page) {
   await openActiveStation(page);
   // דילוג על אנימציית הכניסה אם מופיעה
   try { await page.click('.skip-entry-button', { timeout: 1600 }); } catch { /* reduced או מהיר */ }
-  await page.waitForSelector('.step-boot', { timeout: 4000 });
+  await page.waitForSelector('.cine-screen-boot', { timeout: 4000 });
   await checkStep(page, 'חידה 1 שלב 1', [
-    ['.step-boot .step-next', 'התחילו בשחזור'],
-    ['.terminal-header .modal-button', 'חזרה לחדר'],
+    ['.cine-bottom-bar .step-next', 'התחילו בשחזור'],
+    ['.cine-back', 'חזרה לחדר'],
   ]);
-  await page.click('.step-boot .step-next');
-  await page.waitForSelector('.step-explore');
-  await checkStep(page, 'חידה 1 שלב 2', [['.step-explore .step-next', 'עברו למשימה']]);
-  await page.click('.step-explore .step-next');
-  await page.waitForSelector('.step-mission');
-  await page.click('.option-button:has-text("32×32")');
-  await page.waitForSelector('.keypad');
+  await page.click('.cine-bottom-bar .step-next');
+  await page.waitForSelector('.cine-lcd-value');
+  await checkStep(page, 'חידה 1 שלב 2', [
+    ['.cine-dial', 'חוגת הרזולוציה'],
+    ['.cine-bottom-bar .step-next', 'עברו למשימה'],
+  ]);
+  await page.click('.cine-bottom-bar .step-next');
+  await page.waitForSelector('.submit-button');
+  // סיבוב החוגה מ-64×64 אחורה אל 32×32 מפעיל את הקודן
+  await page.locator('.cine-dial').press('ArrowDown');
+  await page.waitForSelector('.keypad-display');
   await checkStep(page, 'חידה 1 שלב 3', [
     ['.keypad-display', 'תצוגת הקודן'],
     ['.keypad-key:has-text("9")', 'מקש 9'],
@@ -179,7 +183,7 @@ if (FULL) {
   const open = async () => {
     await page.click('.hotspot.active');
     try { await page.click('.skip-entry-button', { timeout: 1800 }); } catch { /* מהיר */ }
-    await page.waitForSelector('.terminal');
+    await page.waitForSelector('.terminal, .cine-stage');
   };
   const done = async () => {
     await page.waitForSelector('.success-panel', { timeout: 20000 });
@@ -189,9 +193,11 @@ if (FULL) {
   };
   // חידה 1
   await open();
-  await page.click('.step-boot .step-next');
-  await page.click('.step-explore .step-next');
-  await page.click('.option-button:has-text("32×32")');
+  await page.click('.cine-bottom-bar .step-next');
+  await page.waitForSelector('.cine-lcd-value');
+  await page.click('.cine-bottom-bar .step-next');
+  await page.waitForSelector('.submit-button');
+  await page.locator('.cine-dial').press('ArrowDown');
   for (const d of ['1', '0', '2', '4']) await page.click(`.keypad-key:has-text("${d}")`);
   await page.click('.submit-button');
   await done();
