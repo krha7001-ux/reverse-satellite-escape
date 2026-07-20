@@ -1,22 +1,24 @@
 import { useCallback, useRef } from 'react';
+import { getSharedAudioContext, soundManager } from '../effects/soundManager';
 
 export type UiSound = 'verify' | 'power' | 'rotate' | 'transmit' | 'success';
 
 /**
  * צלילי ממשק קצרים באמצעות Web Audio API — ללא קובצי קול חיצוניים.
- * ה-AudioContext נוצר רק אחרי פעולת משתמש ראשונה, וההשתקה נבדקת בכל השמעה.
+ * משתמש ב-AudioContext המשותף של soundManager (יחיד לכל המשחק);
+ * ההשתקה נבדקת בכל השמעה.
  */
 export function useUiSounds(muted: boolean) {
-  const ctxRef = useRef<AudioContext | null>(null);
   const mutedRef = useRef(muted);
   mutedRef.current = muted;
 
   const play = useCallback((sound: UiSound) => {
     if (mutedRef.current) return;
     try {
-      if (!ctxRef.current) ctxRef.current = new AudioContext();
-      const ctx = ctxRef.current;
-      if (ctx.state === 'suspended') void ctx.resume();
+      // ההשמעה מגיעה תמיד מפעולת משתמש — מסמנים זאת ל-soundManager
+      soundManager.userGesture();
+      const ctx = getSharedAudioContext();
+      if (!ctx) return;
       const now = ctx.currentTime;
 
       const tone = (

@@ -6,6 +6,7 @@ import {
 } from '../data/stations';
 import { getStationStatus } from '../hooks/useGameState';
 import type { StationId } from '../types/game';
+import { RoomEffectsLayer } from './RoomEffectsLayer';
 
 interface ControlRoomViewerProps {
   solvedStations: StationId[];
@@ -13,6 +14,9 @@ interface ControlRoomViewerProps {
   /** הצגת מוקד ההרכבה הסופית במרכז החדר (כשכל שש החידות נפתרו) */
   showFinalHotspot?: boolean;
   onOpenFinal?: () => void;
+  /** נתונים לשכבת האפקטים — נגזרים ממצב המשחק הקיים */
+  openStationId?: StationId | null;
+  finalCompleted?: boolean;
 }
 
 /** הגדלת הפתיחה — החדר רחב מאזור התצוגה כבר בכניסה, כך שתמיד יש מה לגרור */
@@ -30,6 +34,8 @@ export function ControlRoomViewer({
   onOpenStation,
   showFinalHotspot = false,
   onOpenFinal,
+  openStationId = null,
+  finalCompleted = false,
 }: ControlRoomViewerProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const [viewport, setViewport] = useState({ width: 0, height: 0 });
@@ -127,6 +133,13 @@ export function ControlRoomViewer({
           src={CONTROL_ROOM_IMAGE}
           alt="חדר הבקרה של לוויין הריגול קשת–8"
           draggable={false}
+        />
+
+        {/* שכבת האפקטים — נעה עם החדר, מעל התמונה ומתחת לנקודות הלחיצה */}
+        <RoomEffectsLayer
+          solvedStations={solvedStations}
+          openStationId={openStationId}
+          finalCompleted={finalCompleted}
         />
         {STATIONS.map((station) => {
           const status = getStationStatus(station.id, solvedStations);

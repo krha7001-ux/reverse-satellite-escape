@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Dispatch } from 'react';
 import type { GameAction, GameState } from '../types/game';
 import { STATIONS } from '../data/stations';
@@ -6,6 +6,7 @@ import { useTimer } from '../hooks/useTimer';
 import type { TimerInfo } from '../hooks/useTimer';
 import { isMissionComplete } from '../hooks/useGameState';
 import { useUiSounds } from '../hooks/useUiSounds';
+import { soundManager } from '../effects/soundManager';
 import { PUZZLE_COMPONENTS } from '../puzzles';
 import { FinalAssembly } from '../puzzles/FinalAssembly';
 import { FINAL_BANNER } from '../data/finalAssembly';
@@ -41,6 +42,34 @@ export function GameScreen({ state, dispatch }: GameScreenProps) {
   // אחרי רענון בסיום — חוזרים ישירות למסך ההצלחה של חידת הסיום
   const [finalOpen, setFinalOpen] = useState(state.finalAssembly.completed);
 
+  // קול: השתקה גלובלית + צליל מנעול/תחנה חדשה בחזרה לחדר אחרי פתרון
+  useEffect(() => {
+    soundManager.setMuted(state.muted);
+  }, [state.muted]);
+
+  const prevOpenRef = useRef(state.openStation);
+  const solvedCountRef = useRef(state.solvedStations.length);
+  useEffect(() => {
+    const prevOpen = prevOpenRef.current;
+    prevOpenRef.current = state.openStation;
+    const prevSolvedCount = solvedCountRef.current;
+    solvedCountRef.current = state.solvedStations.length;
+    // תשובה נכונה (תחנה נוספה לרשימת הפתורות)
+    if (state.solvedStations.length > prevSolvedCount) {
+      soundManager.play('correct');
+    }
+    // חזרה לחדר אחרי פתרון: מנעול משתחרר + תחנה חדשה נפתחת
+    if (
+      prevOpen !== null &&
+      state.openStation === null &&
+      state.solvedStations.includes(prevOpen) &&
+      !isMissionComplete(state.solvedStations)
+    ) {
+      soundManager.play('unlock');
+      setTimeout(() => soundManager.play('newStation'), 280);
+    }
+  }, [state.openStation, state.solvedStations]);
+
   // הטיימר נעצר לאחר השלמת רצף ההפעלה
   const displayTimer =
     state.finalAssembly.completed && state.finalAssembly.remainingSeconds !== null
@@ -59,7 +88,11 @@ export function GameScreen({ state, dispatch }: GameScreenProps) {
   const OpenPuzzle = openStation ? PUZZLE_COMPONENTS[openStation.id] : null;
 
   return (
-    <div className="game-screen">
+    // פעולת משתמש ראשונה מפעילה את הקול (AudioContext + זמזום רקע)
+    <div
+      className="game-screen"
+      onPointerDown={() => soundManager.userGesture()}
+    >
       <TopBar
         teamName={state.teamName}
         timer={displayTimer}
@@ -72,11 +105,18 @@ export function GameScreen({ state, dispatch }: GameScreenProps) {
       <div className="game-main">
         <ControlRoomViewer
           solvedStations={state.solvedStations}
-          onOpenStation={(stationId) =>
-            dispatch({ type: 'OPEN_STATION', stationId })
-          }
+          onOpenStation={(stationId) => {
+            soundManager.play('click');
+            soundManager.play('stationOpen');
+            dispatch({ type: 'OPEN_STATION', stationId });
+          }}
           showFinalHotspot={missionComplete}
-          onOpenFinal={() => setFinalOpen(true)}
+          onOpenFinal={() => {
+            soundManager.play('stationOpen');
+            setFinalOpen(true);
+          }}
+          openStationId={state.openStation}
+          finalCompleted={state.finalAssembly.completed}
         />
 
         <StationsBar
